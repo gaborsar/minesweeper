@@ -9,7 +9,7 @@ namespace Minesweeper {
 
 class Board {
 public:
-    Board(const int w, const int h, const int m);
+    Board(const int w, const int h, const int mines);
     void PrintMinesAndCounts();
     void PrintGroups();
 private:
@@ -21,7 +21,7 @@ private:
     void PlaceMine(const Pos& pos);
     void CreateGroups();
     inline void MergeGroups(const int a, const int b);
-    inline std::size_t PosToIndex(const Pos& pos);
+    inline int PosToIndex(const Pos& pos);
 };
 
 }
