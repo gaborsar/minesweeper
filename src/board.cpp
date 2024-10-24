@@ -2,7 +2,9 @@
 
 namespace Minesweeper {
 
-Board::Board(const int w, const int h, const int mines) : m_w{ w }, m_h{ h } {
+Board::Board(SDL_Renderer* renderer, SDL_Texture* tiles,
+        const int w, const int h, const int mines)
+        : m_renderer{ renderer }, m_tiles{ tiles }, m_w{ w }, m_h{ h } {
     const auto l { w * h };
 
     std::mt19937 mt{ std::random_device{}() };
@@ -16,62 +18,77 @@ Board::Board(const int w, const int h, const int mines) : m_w{ w }, m_h{ h } {
     for (int i { 0 }; i < mines; ++i) {
         auto x { gx(mt) };
         auto y { gy(mt) };
-        auto j { PosToIndex({ x, y }) };
+        auto j { PosToIndex(x, y) };
         while (m_mines[j]) {
             x = gx(mt);
             y = gy(mt);
-            j = PosToIndex({ x, y });
+            j = PosToIndex(x, y);
         }
-        PlaceMine({ x, y });
+        PlaceMine(x, y);
     }
 
     CreateGroups();
-}
 
-void Board::PrintMinesAndCounts() {
-    for (int y { 0 }; y < m_h; ++y) {
+    for (int y { 0}; y < m_h; ++y) {
         for (int x { 0 }; x < m_w; ++x) {
-            const auto i { PosToIndex({ x, y }) };
-            std::cout << '\t';
-            if (m_mines[i]) {
-                std::cout << 'X';
-            } else if (m_counts[i] == 0) {
-                std::cout << '.';
-            } else {
-                std::cout << m_counts[i];
-            }
+            m_rendering_queue.push_back({ TileId::Closed, x, y });
         }
-        std::cout << '\n';
     }
 }
 
-void Board::PrintGroups() {
-    for (int y { 0 }; y < m_h; ++y) {
-        for (int x { 0 }; x < m_w; ++x) {
-            const auto i { PosToIndex({ x, y }) };
-            std::cout << '\t';
-            if (m_groups[i] == 0) {
-                std::cout << '.';
-            } else {
-                std::cout << m_groups[i];
-            }
+void Board::Render() {
+    SDL_Rect src_rect;
+    src_rect.x = 0;
+    src_rect.y = 0;
+    src_rect.w = block_size;
+    src_rect.h = block_size;
+
+    SDL_Rect dst_rect;
+    dst_rect.x = 0;
+    dst_rect.y = 0;
+    dst_rect.w = block_size;
+    dst_rect.h = block_size;
+
+    for (const auto& job : m_rendering_queue) {
+        dst_rect.x = job.x * block_size;
+        dst_rect.y = job.y * block_size;
+        switch (job.id) {
+            case TileId::Closed:
+                src_rect.x = 0;
+                break;
+            case TileId::Open:
+                src_rect.x = block_size;
+                break;
         }
-        std::cout << '\n';
+        SDL_RenderCopy(m_renderer, m_tiles, &src_rect, &dst_rect);
     }
+    SDL_RenderPresent(m_renderer);
 }
 
-void Board::PlaceMine(const Pos& pos) {
-    const auto i1 { PosToIndex(pos) };
+void Board::HandleClick(const int x, const int y) {
+    const int xi = x / block_size;
+    if (xi < 0 || xi > m_w - 1) {
+        return;
+    }
+    const int yi = y / block_size;
+    if (yi < 0 || yi > m_h - 1) {
+        return;
+    }
+    m_rendering_queue.push_back({ TileId::Open, xi, yi });
+}
+
+void Board::PlaceMine(const int x, const int y) {
+    const auto i1 { PosToIndex(x, y) };
     m_mines[i1] = true;
-    for (int y { pos.y - 1 }; y <= pos.y + 1; ++y) {
-        if (y < 0 || y > m_h - 1) {
+    for (int y2 { y - 1 }; y2 <= y + 1; ++y2) {
+        if (y2 < 0 || y2 > m_h - 1) {
             continue;
         }
-        for (int x { pos.x - 1 }; x <= pos.x + 1; ++x) {
-            if (x < 0 || x > m_w - 1) {
+        for (int x2 { x - 1 }; x2 <= x + 1; ++x2) {
+            if (x2 < 0 || x > m_w - 1) {
                 continue;
             }
-            const auto i2 { PosToIndex({ x, y }) };
+            const auto i2 { PosToIndex(x2, y2) };
             m_counts[i2]++;
         }
     }
@@ -87,7 +104,7 @@ void Board::CreateGroups() {
     }
     for (int y1 { 0 }; y1 < m_h; ++y1) {
         for (int x1 { 0 }; x1 < m_w; ++x1) {
-            const auto i1 { PosToIndex({ x1, y1 }) };
+            const auto i1 { PosToIndex(x1, y1) };
             if (m_mines[i1] || m_counts[i1] != 0) {
                 continue;
             }
@@ -99,7 +116,7 @@ void Board::CreateGroups() {
                     if (x2 < 0 || x2 > m_w - 1) {
                         continue;
                     }
-                    const auto i2 { PosToIndex({ x2, y2 }) };
+                    const auto i2 { PosToIndex(x2, y2) };
                     if (m_mines[i2] || m_counts[i2] != 0) {
                         continue;
                     }
@@ -128,8 +145,8 @@ inline void Board::MergeGroups(const int a, const int b) {
     }
 }
 
-inline int Board::PosToIndex(const Pos& pos) {
-    return pos.y * m_w + pos.x;
+inline int Board::PosToIndex(const int x, const int y) {
+    return y * m_w + x;
 }
 
 }

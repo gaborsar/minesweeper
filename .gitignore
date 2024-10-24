@@ -1,2 +1,9 @@
-build
+.DS_Store
+.vscode
 .ccls-cache
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+compile_commands.json
+Makefile
+build
