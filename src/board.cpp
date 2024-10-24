@@ -1,46 +1,4 @@
-#include <iostream>
-#include <memory>
-#include <random>
-#include <vector>
-
-struct Pos
-{
-    int x;
-    int y;
-};
-
-class Board
-{
-public:
-    Board(const int w, const int h, const int m);
-    void PlaceMine(const Pos& pos);
-    void PrintMinesAndCounts();
-    void PrintGroups();
-private:
-    int m_w {};
-    int m_h {};
-    std::vector<bool> m_mines{};
-    std::vector<int> m_counts{};
-    std::vector<int> m_groups{};
-    void CreateGroups();
-    inline void MergeGroups(const int a, const int b);
-    inline std::size_t PosToIndex(const Pos& pos);
-};
-
-int main()
-{
-    auto board { std::make_unique<Board>(10, 10, 10) };
-
-    std::cout << '\n';
-    board->PrintMinesAndCounts();
-    std::cout << '\n';
-
-    std::cout << '\n';
-    board->PrintGroups();
-    std::cout << '\n';
-
-    return 0;
-}
+#include "board.h"
 
 Board::Board(const int w, const int h, const int m) : m_w{ w }, m_h{ h }
 {
@@ -178,4 +136,3 @@ inline std::size_t Board::PosToIndex(const Pos& pos)
 {
     return pos.y * m_w + pos.x;
 }
-

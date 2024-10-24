@@ -1,0 +1,24 @@
+#pragma once
+
+#include <iostream>
+#include <vector>
+#include <random>
+#include "pos.h"
+
+class Board
+{
+public:
+    Board(const int w, const int h, const int m);
+    void PlaceMine(const Pos& pos);
+    void PrintMinesAndCounts();
+    void PrintGroups();
+private:
+    int m_w {};
+    int m_h {};
+    std::vector<bool> m_mines{};
+    std::vector<int> m_counts{};
+    std::vector<int> m_groups{};
+    void CreateGroups();
+    inline void MergeGroups(const int a, const int b);
+    inline std::size_t PosToIndex(const Pos& pos);
+};
