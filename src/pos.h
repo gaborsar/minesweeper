@@ -1,7 +1,10 @@
 #pragma once
 
-struct Pos
-{
+namespace Minesweeper {
+
+struct Pos {
     int x;
     int y;
 };
+
+}

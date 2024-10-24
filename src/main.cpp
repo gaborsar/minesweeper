@@ -2,9 +2,8 @@
 #include <memory>
 #include "board.h"
 
-int main()
-{
-    auto board { std::make_unique<Board>(10, 10, 10) };
+int main() {
+    auto board { std::make_unique<Minesweeper::Board>(10, 10, 10) };
 
     std::cout << '\n';
     board->PrintMinesAndCounts();

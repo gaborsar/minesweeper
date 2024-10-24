@@ -1,7 +1,8 @@
 #include "board.h"
 
-Board::Board(const int w, const int h, const int m) : m_w{ w }, m_h{ h }
-{
+namespace Minesweeper {
+
+Board::Board(const int w, const int h, const int m) : m_w{ w }, m_h{ h } {
     const std::size_t l { static_cast<std::size_t>(w * h) };
 
     std::mt19937 mt{ std::random_device{}() };
@@ -27,8 +28,7 @@ Board::Board(const int w, const int h, const int m) : m_w{ w }, m_h{ h }
     CreateGroups();
 }
 
-void Board::PrintMinesAndCounts()
-{
+void Board::PrintMinesAndCounts() {
     for (int y { 0 }; y < m_h; ++y) {
         for (int x { 0 }; x < m_w; ++x) {
             const auto i { PosToIndex({ x, y }) };
@@ -45,8 +45,7 @@ void Board::PrintMinesAndCounts()
     }
 }
 
-void Board::PrintGroups()
-{
+void Board::PrintGroups() {
     for (int y { 0 }; y < m_h; ++y) {
         for (int x { 0 }; x < m_w; ++x) {
             const auto i { PosToIndex({ x, y }) };
@@ -61,8 +60,7 @@ void Board::PrintGroups()
     }
 }
 
-void Board::PlaceMine(const Pos& pos)
-{
+void Board::PlaceMine(const Pos& pos) {
     const auto i1 { PosToIndex(pos) };
     m_mines[i1] = true;
     for (int y { pos.y - 1 }; y <= pos.y + 1; ++y) {
@@ -79,8 +77,7 @@ void Board::PlaceMine(const Pos& pos)
     }
 }
 
-void Board::CreateGroups()
-{
+void Board::CreateGroups() {
     for (std::size_t i { 0 }; i < m_w * m_h; ++i) {
         if (!m_mines[i] && m_counts[i] == 0) {
             m_groups[i] = i + 1;
@@ -122,8 +119,7 @@ void Board::CreateGroups()
     }
 }
 
-inline void Board::MergeGroups(const int a, const int b)
-{
+inline void Board::MergeGroups(const int a, const int b) {
     for (std::size_t i { 0 }; i < m_w * m_h; ++i) {
         if (m_groups[i] != b) {
             continue;
@@ -132,7 +128,8 @@ inline void Board::MergeGroups(const int a, const int b)
     }
 }
 
-inline std::size_t Board::PosToIndex(const Pos& pos)
-{
+inline std::size_t Board::PosToIndex(const Pos& pos) {
     return pos.y * m_w + pos.x;
+}
+
 }
