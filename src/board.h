@@ -1,45 +1,30 @@
 #pragma once
 
-#include <functional>
-#include <iostream>
-#include <vector>
 #include <random>
-#include <SDL2/SDL.h>
+#include <memory>
+#include <vector>
+#include "renderer.h"
+#include "block.h"
 
-namespace Minesweeper {
+namespace Minesweeper
+{
 
-inline constexpr int block_size = 30;
+    class Board
+    {
+    public:
+        Board(std::shared_ptr<Renderer> renderer, const int board_width, const int board_height, const int mines);
+        void HandleClick(const int px, const int py);
+        void Render();
 
-enum class TileId {
-    Closed,
-    Open,
-};
-
-struct RenderingJob {
-    TileId id;
-    int x;
-    int y;
-};
-
-class Board {
-public:
-    Board(SDL_Renderer* renderer, SDL_Texture* tiles,
-        const int w, const int h, const int mines);
-    void Render();
-    void HandleClick(const int x, const int y);
-private:
-    SDL_Renderer* m_renderer;
-    SDL_Texture* m_tiles;
-    int m_w {};
-    int m_h {};
-    std::vector<bool> m_mines{};
-    std::vector<int> m_counts{};
-    std::vector<int> m_groups{};
-    std::vector<RenderingJob> m_rendering_queue{};
-    void PlaceMine(const int x, const int y);
-    void CreateGroups();
-    inline void MergeGroups(const int a, const int b);
-    inline int PosToIndex(const int x, const int y);
-};
+    private:
+        std::shared_ptr<Renderer> m_renderer;
+        int m_board_width{0};
+        int m_board_height{0};
+        std::vector<std::shared_ptr<Block>> m_blocks{};
+        void PlaceMine(const int x, const int y);
+        void CreateGroups();
+        inline void MergeGroups(const int a, const int b);
+        inline int PosToIndex(const int x, const int y);
+    };
 
 }

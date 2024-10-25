@@ -1,7 +1,0 @@
-Tiles:
- 1. base
- 2. flag
- 3. mine
- 4. mine exploded
- 5. open empty
- 6. open 1-8
