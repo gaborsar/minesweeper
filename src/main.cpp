@@ -56,17 +56,26 @@ int main()
     SDL_FreeSurface(sdl_img);
     sdl_img = nullptr;
 
+    // INIT GAME
+
     auto renderer{std::make_shared<Minesweeper::Renderer>(sdl_renderer, sdl_texture)};
     auto game{std::make_unique<Minesweeper::Game>(renderer, board_width, board_height, number_of_mines)};
 
-    auto running{true};
+    bool running{true};
+    bool should_render{true};
+    bool should_schedule_render{false};
+
+    // MAIN LOOP
+
     SDL_Event event;
 
     while (running)
     {
-        SDL_RenderClear(sdl_renderer);
-
-        game->Render();
+        if (should_render)
+        {
+            SDL_RenderClear(sdl_renderer);
+            game->Render();
+        }
 
         while (SDL_PollEvent(&event))
         {
@@ -77,14 +86,27 @@ int main()
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 game->HandleClick(event.button.x, event.button.y);
+                should_schedule_render = true;
                 continue;
             }
         }
 
-        SDL_RenderPresent(sdl_renderer);
+        if (should_render)
+        {
+            SDL_RenderPresent(sdl_renderer);
+            should_render = false;
+        }
+
+        if (should_schedule_render)
+        {
+            should_render = true;
+            should_schedule_render = false;
+        }
 
         SDL_Delay(10);
     }
+
+    // CLEANUP SDL
 
     SDL_DestroyTexture(sdl_texture);
     SDL_DestroyRenderer(sdl_renderer);
