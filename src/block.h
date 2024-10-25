@@ -2,7 +2,6 @@
 
 namespace Minesweeper
 {
-
     struct Block
     {
         bool is_open{false};
@@ -12,5 +11,4 @@ namespace Minesweeper
         int near_mine_count{0};
         int group{0};
     };
-
 }

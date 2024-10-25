@@ -8,7 +8,6 @@
 
 namespace Minesweeper
 {
-
     class Board
     {
     public:
@@ -26,5 +25,4 @@ namespace Minesweeper
         inline void MergeGroups(const int a, const int b);
         inline int PosToIndex(const int x, const int y);
     };
-
 }

@@ -2,7 +2,6 @@
 
 namespace Minesweeper
 {
-
     const Size GetWindowSize(const int board_width, const int board_height)
     {
         return {20 * 2 + 30 * board_width, 20 * 3 + 60 + 30 * board_height};
@@ -65,5 +64,4 @@ namespace Minesweeper
             m_renderer->RenderSprite(x2, y, Sprites::FrameVertical);
         }
     }
-
 }

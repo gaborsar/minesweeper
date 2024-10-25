@@ -2,7 +2,6 @@
 
 namespace Minesweeper
 {
-
     Board::Board(std::shared_ptr<Renderer> renderer, const int board_width, const int board_height, const int number_of_mines)
         : m_renderer{renderer}, m_board_width{board_width}, m_board_height{board_height}
     {
@@ -169,5 +168,4 @@ namespace Minesweeper
     {
         return y * m_board_width + x;
     }
-
 }

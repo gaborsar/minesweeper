@@ -7,7 +7,6 @@
 
 namespace Minesweeper
 {
-
     struct Size
     {
         int width;
@@ -37,5 +36,4 @@ namespace Minesweeper
         // void RenderIntermediateButton();
         // void RenderExpertButton();
     };
-
 }

@@ -5,7 +5,6 @@
 
 namespace Minesweeper
 {
-
     class Renderer
     {
     public:
@@ -16,5 +15,4 @@ namespace Minesweeper
         SDL_Renderer *m_renderer;
         SDL_Texture *m_texture;
     };
-
 }

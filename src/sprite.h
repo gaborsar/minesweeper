@@ -2,7 +2,6 @@
 
 namespace Minesweeper
 {
-
     struct Sprite
     {
         int x;
@@ -24,5 +23,4 @@ namespace Minesweeper
         inline constexpr Sprite FrameHorizontal{20, 30, 10, 20};
         inline constexpr Sprite FrameVertical{60, 30, 20, 10};
     }
-
 }
