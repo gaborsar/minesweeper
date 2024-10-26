@@ -1,14 +1,10 @@
 #pragma once
 
+#include "Rect.h"
+
 namespace Minesweeper
 {
-    struct Sprite
-    {
-        int x;
-        int y;
-        int w;
-        int h;
-    };
+    using Sprite = Rect;
 
     namespace Sprites
     {
@@ -22,5 +18,6 @@ namespace Minesweeper
         inline constexpr Sprite FrameRightJoint{100, 30, 20, 20};
         inline constexpr Sprite FrameHorizontal{20, 30, 10, 20};
         inline constexpr Sprite FrameVertical{60, 30, 20, 10};
+        inline constexpr Sprite FrameBase{2, 2, 10, 10};
     }
 }

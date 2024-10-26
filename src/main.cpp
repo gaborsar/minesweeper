@@ -1,13 +1,13 @@
 #include <iostream>
 #include <memory>
 #include <SDL2/SDL.h>
-#include "renderer.h"
-#include "game.h"
+#include "Renderer.h"
+#include "Game.h"
 
 int main()
 {
-    const int board_width{10};
-    const int board_height{10};
+    const int board_width{20};
+    const int board_height{20};
     const int number_of_mines{10};
 
     const auto window_size = Minesweeper::GetWindowSize(board_width, board_height);
@@ -22,7 +22,7 @@ int main()
 
     auto sdl_window{SDL_CreateWindow(
         "Minesweeper", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        window_size.width, window_size.height, SDL_WINDOW_SHOWN)};
+        window_size.w, window_size.h, SDL_WINDOW_SHOWN)};
 
     if (!sdl_window)
     {
@@ -63,7 +63,6 @@ int main()
 
     bool running{true};
     bool should_render{true};
-    bool should_schedule_render{false};
 
     // MAIN LOOP
 
@@ -71,12 +70,6 @@ int main()
 
     while (running)
     {
-        if (should_render)
-        {
-            SDL_RenderClear(sdl_renderer);
-            game->Render();
-        }
-
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -85,25 +78,21 @@ int main()
                 running = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                game->HandleClick(event.button.x, event.button.y);
-                should_schedule_render = true;
+                game->OnClick(event.button.x, event.button.y);
+                should_render = true;
                 continue;
             }
         }
 
         if (should_render)
         {
+            SDL_RenderClear(sdl_renderer);
+            game->Render();
             SDL_RenderPresent(sdl_renderer);
             should_render = false;
         }
 
-        if (should_schedule_render)
-        {
-            should_render = true;
-            should_schedule_render = false;
-        }
-
-        SDL_Delay(10);
+        SDL_Delay(25);
     }
 
     // CLEANUP SDL

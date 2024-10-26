@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
-#include "sprite.h"
+#include "Sprite.h"
 
 namespace Minesweeper
 {
@@ -9,7 +9,7 @@ namespace Minesweeper
     {
     public:
         Renderer(SDL_Renderer *renderer, SDL_Texture *texture);
-        void RenderSprite(const int px, const int py, const Sprite sprite);
+        void RenderSprite(const int px, const int py, const Sprite& sprite);
 
     private:
         SDL_Renderer *m_renderer;
