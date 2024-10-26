@@ -97,12 +97,12 @@ namespace Minesweeper
             }
             for (int x2{x - 1}; x2 <= x + 1; ++x2)
             {
-                if (x2 < 0 || x > m_boardWidth - 1)
+                if (x2 < 0 || x2 > m_boardWidth - 1)
                 {
                     continue;
                 }
                 const int i2{PosToIndex(x2, y2)};
-                m_blocks[i2]->NearMineCount++;
+                ++m_blocks[i2]->NearMineCount;
             }
         }
     }
