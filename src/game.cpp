@@ -13,13 +13,14 @@ namespace Minesweeper
         m_board = std::make_unique<Board>(renderer, boardWidth, boardHeight, numberOfMines);
     }
 
-    void Game::OnClick(const int px, const int py)
+    const bool Game::OnClick(const int px, const int py)
     {
         const Rect box = m_board->GetBox();
         if (IsWithin(box, px, py))
         {
-            m_board->OnClick(px - box.x, py - box.y);
+            return m_board->OnClick(px - box.x, py - box.y);
         }
+        return false;
     }
 
     void Game::Render()

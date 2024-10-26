@@ -20,7 +20,7 @@ namespace Minesweeper
     {
     public:
         Game(std::shared_ptr<Renderer> renderer, const int boardWidth, const int boardHeight, const int numberOfMines);
-        void OnClick(const int px, const int py);
+        const bool OnClick(const int px, const int py);
         void Render();
 
     private:

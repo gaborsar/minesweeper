@@ -6,8 +6,8 @@
 
 int main()
 {
-    const int board_width{20};
-    const int board_height{20};
+    const int board_width{10};
+    const int board_height{10};
     const int number_of_mines{10};
 
     const auto window_size = Minesweeper::GetWindowSize(board_width, board_height);
@@ -78,8 +78,7 @@ int main()
                 running = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                game->OnClick(event.button.x, event.button.y);
-                should_render = true;
+                should_render = game->OnClick(event.button.x, event.button.y);
                 continue;
             }
         }

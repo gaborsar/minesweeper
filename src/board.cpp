@@ -43,20 +43,25 @@ namespace Minesweeper
         return { x, y, w, h };
     }
 
-    void Board::OnClick(const int px, const int py)
+    const bool Board::OnClick(const int px, const int py)
     {
         const int x { px / 30 };
         if (x < 0 || x > m_boardWidth - 1)
         {
-            return;
+            return false;
         }
         const int y { py / 30 };
         if (y < 0 || y > m_boardHeight - 1)
         {
-            return;
+            return false;
         }
         const int i { PosToIndex(x, y) };
+        if (m_blocks[i]->IsOpen)
+        {
+            return false;
+        }
         m_blocks[i]->IsOpen = true;
+        return true;
     }
 
     void Board::Render()

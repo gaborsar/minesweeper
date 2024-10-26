@@ -22,8 +22,8 @@ namespace Minesweeper
     {
     public:
         Board(std::shared_ptr<Renderer> renderer, const int boardWidth, const int boardHeight, const int mines);
-        void OnClick(const int px, const int py) override;
         const Rect GetBox() override;
+        const bool OnClick(const int px, const int py) override;
         void Render();
 
     private:
