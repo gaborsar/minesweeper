@@ -32,11 +32,8 @@ namespace Minesweeper
 
     private:
         void RenderBackground();
-        // void RenderCounter();
-        // void RenderTimer();
-        // void RenderPlayButton();
-        // void RenderBeginnerButton();
-        // void RenderIntermediateButton();
-        // void RenderExpertButton();
+        void RenderCounter();
+        void RenderTimer();
+        void RenderRestartButton();
     };
 }

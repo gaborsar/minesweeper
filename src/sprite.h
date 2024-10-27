@@ -10,6 +10,7 @@ namespace Minesweeper
     {
         inline constexpr Sprite BlockClosed{0, 0, 30, 30};
         inline constexpr Sprite BlockOpen{30, 0, 30, 30};
+
         inline constexpr Sprite FrameTopLeftCorner{0, 30, 20, 20};
         inline constexpr Sprite FrameTopRightCorner{40, 30, 20, 20};
         inline constexpr Sprite FrameBottomLeftCorner{120, 30, 20, 20};
@@ -19,5 +20,21 @@ namespace Minesweeper
         inline constexpr Sprite FrameHorizontal{20, 30, 10, 20};
         inline constexpr Sprite FrameVertical{60, 30, 20, 10};
         inline constexpr Sprite FrameBase{2, 2, 10, 10};
+
+        inline constexpr Sprite DigitBorder{0, 87, 64, 41};
+        inline constexpr Sprite DigitNone{0, 50, 20, 37};
+        inline constexpr Sprite Digit0{20, 50, 20, 37};
+        inline constexpr Sprite Digit1{40, 50, 20, 37};
+        inline constexpr Sprite Digit2{60, 50, 20, 37};
+        inline constexpr Sprite Digit3{80, 50, 20, 37};
+        inline constexpr Sprite Digit4{100, 50, 20, 37};
+        inline constexpr Sprite Digit5{120, 50, 20, 37};
+        inline constexpr Sprite Digit6{140, 50, 20, 37};
+        inline constexpr Sprite Digit7{160, 50, 20, 37};
+        inline constexpr Sprite Digit8{180, 50, 20, 37};
+        inline constexpr Sprite Digit9{200, 50, 20, 37};
+
+        inline constexpr Sprite RestartButtonHappy{64, 87, 30, 30};
+        inline constexpr Sprite RestartButtonSad{94, 87, 30, 30};
     }
 }
