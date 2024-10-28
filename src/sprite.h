@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include "Rect.h"
 
 namespace Minesweeper
@@ -33,6 +34,30 @@ namespace Minesweeper
         inline constexpr Sprite Digit7{160, 50, 20, 37};
         inline constexpr Sprite Digit8{180, 50, 20, 37};
         inline constexpr Sprite Digit9{200, 50, 20, 37};
+
+        inline constexpr std::array<Sprite, 10> LeftDigits{
+            DigitNone,
+            Digit1,
+            Digit2,
+            Digit3,
+            Digit4,
+            Digit5,
+            Digit6,
+            Digit7,
+            Digit8,
+            Digit9};
+
+        inline constexpr std::array<Sprite, 10> RightDigits{
+            Digit0,
+            Digit1,
+            Digit2,
+            Digit3,
+            Digit4,
+            Digit5,
+            Digit6,
+            Digit7,
+            Digit8,
+            Digit9};
 
         inline constexpr Sprite RestartButtonHappy{64, 87, 30, 30};
         inline constexpr Sprite RestartButtonSad{94, 87, 30, 30};

@@ -6,11 +6,11 @@
 
 int main()
 {
-    const int board_width{10};
-    const int board_height{10};
-    const int number_of_mines{10};
+    const int boardWidth{10};
+    const int boardHeight{10};
+    const int numberOfMines{10};
 
-    const auto window_size = Minesweeper::GetWindowSize(board_width, board_height);
+    const auto windowSize = Minesweeper::GetWindowSize(boardWidth, boardHeight);
 
     // INIT SDL
 
@@ -20,56 +20,61 @@ int main()
         return 1;
     }
 
-    auto sdl_window{SDL_CreateWindow(
+    auto sdlWindow{SDL_CreateWindow(
         "Minesweeper", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        window_size.w, window_size.h, SDL_WINDOW_SHOWN)};
+        windowSize.w, windowSize.h, SDL_WINDOW_SHOWN)};
 
-    if (!sdl_window)
+    if (!sdlWindow)
     {
         std::cerr << "Error creating window: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    auto sdl_renderer{SDL_CreateRenderer(sdl_window, -1, SDL_RENDERER_ACCELERATED)};
+    auto sdlRenderer{SDL_CreateRenderer(sdlWindow, -1, SDL_RENDERER_ACCELERATED)};
 
-    if (!sdl_renderer)
+    if (!sdlRenderer)
     {
         std::cerr << "Error creating renderer: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    auto sdl_img{SDL_LoadBMP("tiles.bmp")};
+    auto sdlImg{SDL_LoadBMP("tiles.bmp")};
 
-    if (!sdl_img)
+    if (!sdlImg)
     {
         std::cerr << "Error loading tiles: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    auto sdl_texture{SDL_CreateTextureFromSurface(sdl_renderer, sdl_img)};
-    if (!sdl_texture)
+    auto sdlTexture{SDL_CreateTextureFromSurface(sdlRenderer, sdlImg)};
+    if (!sdlTexture)
     {
         std::cerr << "Error creating texture: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    SDL_FreeSurface(sdl_img);
-    sdl_img = nullptr;
+    SDL_FreeSurface(sdlImg);
+    sdlImg = nullptr;
 
     // INIT GAME
 
-    auto renderer{std::make_shared<Minesweeper::Renderer>(sdl_renderer, sdl_texture)};
-    auto game{std::make_unique<Minesweeper::Game>(renderer, board_width, board_height, number_of_mines)};
+    auto renderer{std::make_shared<Minesweeper::Renderer>(sdlRenderer, sdlTexture)};
+    auto game{std::make_unique<Minesweeper::Game>(renderer, boardWidth, boardHeight, numberOfMines)};
 
-    bool running{true};
-    bool should_render{true};
+    game->SetStartTime(static_cast<int>(SDL_GetTicks()));
 
     // MAIN LOOP
+
+    bool running{true};
+    bool shouldRender{true};
+    int frameCount{0};
 
     SDL_Event event;
 
     while (running)
     {
+        Uint32 startTicks{SDL_GetTicks()};
+
         while (SDL_PollEvent(&event))
         {
             switch (event.type)
@@ -78,27 +83,39 @@ int main()
                 running = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                should_render = game->OnClick(event.button.x, event.button.y);
+                shouldRender = shouldRender || game->OnClick(event.button.x, event.button.y);
                 continue;
             }
         }
 
-        if (should_render)
+        shouldRender = shouldRender || game->Update(startTicks);
+
+        if (shouldRender)
         {
-            SDL_RenderClear(sdl_renderer);
+            SDL_RenderClear(sdlRenderer);
             game->Render();
-            SDL_RenderPresent(sdl_renderer);
-            should_render = false;
+            SDL_RenderPresent(sdlRenderer);
+            shouldRender = false;
         }
 
-        SDL_Delay(25);
+        SDL_Delay(15);
+
+        Uint32 endTicks{SDL_GetTicks()};
+
+        const float fps{1.0f / ((endTicks - startTicks) / 1000.0f)};
+
+        if (++frameCount == 60)
+        {
+            frameCount = 0;
+            std::cout << "fps: " << fps << std::endl;
+        }
     }
 
     // CLEANUP SDL
 
-    SDL_DestroyTexture(sdl_texture);
-    SDL_DestroyRenderer(sdl_renderer);
-    SDL_DestroyWindow(sdl_window);
+    SDL_DestroyTexture(sdlTexture);
+    SDL_DestroyRenderer(sdlRenderer);
+    SDL_DestroyWindow(sdlWindow);
     SDL_Quit();
 
     return 0;
