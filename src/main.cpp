@@ -83,7 +83,9 @@ int main()
                 running = false;
                 break;
             case SDL_MOUSEBUTTONDOWN:
-                shouldRender = shouldRender || game->OnClick(event.button.x, event.button.y);
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    shouldRender = shouldRender || game->OnClick(event.button.x, event.button.y);
+                }
                 continue;
             }
         }
