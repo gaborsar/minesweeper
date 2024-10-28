@@ -11,6 +11,7 @@ add_executable(minesweeper
     src/Game.cpp
     src/Game.h
     src/Main.cpp
+    src/Mouse.h
     src/Rect.h
     src/Renderer.cpp
     src/Renderer.h
