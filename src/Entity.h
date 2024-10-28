@@ -7,8 +7,7 @@ namespace Minesweeper {
 class Entity {
 public:
   virtual ~Entity() = default;
-  virtual const Rect GetBox() = 0;
-  virtual const bool OnClick(const int px, const int py,
-                             const MouseButton button) = 0;
+  virtual Rect GetBox() = 0;
+  virtual bool OnClick(int px, int py, MouseButton button) = 0;
 };
 } // namespace Minesweeper

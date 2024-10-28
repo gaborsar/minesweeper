@@ -1,13 +1,14 @@
 #include "Board.h"
+#include <algorithm>
 #include <iostream>
 #include <random>
 
 namespace Minesweeper {
-Board::Board(std::shared_ptr<Renderer> renderer, const int boardWidth,
-             const int boardHeight, const int numberOfMines)
+Board::Board(std::shared_ptr<Renderer> renderer, int boardWidth,
+             int boardHeight, int numberOfMines)
     : m_renderer{renderer}, m_boardWidth{boardWidth},
       m_boardHeight{boardHeight} {
-  const int l{boardWidth * boardHeight};
+  int l{boardWidth * boardHeight};
 
   std::mt19937 mt{std::random_device{}()};
   std::uniform_int_distribution<int> randX{0, boardWidth - 1};
@@ -33,8 +34,8 @@ Board::Board(std::shared_ptr<Renderer> renderer, const int boardWidth,
   CreateGroups();
 }
 
-void Board::PlaceMine(const int x, const int y) {
-  const int i1{PosToIndex(x, y)};
+void Board::PlaceMine(int x, int y) {
+  int i1{PosToIndex(x, y)};
   m_blocks[i1]->IsMine = true;
   for (int y2{y - 1}; y2 <= y + 1; ++y2) {
     if (y2 < 0 || y2 > m_boardHeight - 1) {
@@ -44,7 +45,7 @@ void Board::PlaceMine(const int x, const int y) {
       if (x2 < 0 || x2 > m_boardWidth - 1) {
         continue;
       }
-      const int i2{PosToIndex(x2, y2)};
+      int i2{PosToIndex(x2, y2)};
       ++m_blocks[i2]->NearMineCount;
     }
   }
@@ -60,7 +61,7 @@ void Board::CreateGroups() {
   }
   for (int y1{0}; y1 < m_boardHeight; ++y1) {
     for (int x1{0}; x1 < m_boardWidth; ++x1) {
-      const int i1{PosToIndex(x1, y1)};
+      int i1{PosToIndex(x1, y1)};
       if (m_blocks[i1]->IsMine || m_blocks[i1]->NearMineCount != 0) {
         continue;
       }
@@ -72,12 +73,12 @@ void Board::CreateGroups() {
           if (x2 < 0 || x2 > m_boardWidth - 1) {
             continue;
           }
-          const int i2{PosToIndex(x2, y2)};
+          int i2{PosToIndex(x2, y2)};
           if (m_blocks[i2]->IsMine || m_blocks[i2]->NearMineCount != 0) {
             continue;
           }
-          const int g1{m_blocks[i1]->Group};
-          const int g2{m_blocks[i2]->Group};
+          int g1{m_blocks[i1]->Group};
+          int g2{m_blocks[i2]->Group};
           if (g1 == g2) {
             continue;
           }
@@ -92,7 +93,7 @@ void Board::CreateGroups() {
   }
 }
 
-inline void Board::MergeGroups(const int a, const int b) {
+inline void Board::MergeGroups(int a, int b) {
   for (int i{0}; i < m_boardWidth * m_boardHeight; ++i) {
     if (m_blocks[i]->Group != b) {
       continue;
@@ -101,25 +102,24 @@ inline void Board::MergeGroups(const int a, const int b) {
   }
 }
 
-const Rect Board::GetBox() {
-  const int x = 20;
-  const int y = 20 + 60 + 20;
-  const int w = m_boardWidth * 30;
-  const int h = m_boardHeight * 30;
+Rect Board::GetBox() {
+  int x = 20;
+  int y = 20 + 60 + 20;
+  int w = m_boardWidth * 30;
+  int h = m_boardHeight * 30;
   return {x, y, w, h};
 }
 
-const bool Board::OnClick(const int px, const int py,
-                          const MouseButton button) {
-  const int x{px / 30};
+bool Board::OnClick(int px, int py, MouseButton button) {
+  int x{px / 30};
   if (x < 0 || x > m_boardWidth - 1) {
     return false;
   }
-  const int y{py / 30};
+  int y{py / 30};
   if (y < 0 || y > m_boardHeight - 1) {
     return false;
   }
-  const int i{PosToIndex(x, y)};
+  int i{PosToIndex(x, y)};
   switch (button) {
   case MouseButton::Left:
     return OnLeftClick(i);
@@ -129,9 +129,9 @@ const bool Board::OnClick(const int px, const int py,
   return false;
 }
 
-const bool Board::OnLeftClick(const int i) {
+bool Board::OnLeftClick(int i) {
   std::cout << "left" << std::endl;
-  const auto block = m_blocks[i];
+  auto block = m_blocks[i];
   if (block->IsOpen || block->IsFlagged) {
     return false;
   }
@@ -139,9 +139,9 @@ const bool Board::OnLeftClick(const int i) {
   return true;
 }
 
-const bool Board::OnRightClick(const int i) {
+bool Board::OnRightClick(int i) {
   std::cout << "right" << std::endl;
-  const auto block = m_blocks[i];
+  auto block = m_blocks[i];
   if (block->IsOpen) {
     return false;
   }
@@ -152,10 +152,10 @@ const bool Board::OnRightClick(const int i) {
 void Board::Render() {
   for (int y{0}; y < m_boardHeight; ++y) {
     for (int x{0}; x < m_boardWidth; ++x) {
-      const int i{PosToIndex(x, y)};
-      const int px{20 + x * 30};
-      const int py{20 + 60 + 20 + y * 30};
-      const auto block = m_blocks[i];
+      int i{PosToIndex(x, y)};
+      int px{20 + x * 30};
+      int py{20 + 60 + 20 + y * 30};
+      auto block = m_blocks[i];
       if (block->IsOpen) {
         m_renderer->RenderSprite(px, py, Sprites::BlockOpen);
         continue;
@@ -169,7 +169,10 @@ void Board::Render() {
   }
 }
 
-inline int Board::PosToIndex(const int x, const int y) {
-  return y * m_boardWidth + x;
+int Board::CountFlags() {
+  return std::count_if(m_blocks.begin(), m_blocks.end(),
+                       [](auto &block) { return block->IsFlagged; });
 }
+
+inline int Board::PosToIndex(int x, int y) { return y * m_boardWidth + x; }
 } // namespace Minesweeper

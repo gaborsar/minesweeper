@@ -12,14 +12,16 @@ struct Size {
   int h;
 };
 
-const Size GetWindowSize(const int boardWidth, const int boardHeight);
+inline constexpr Size GetWindowSize(int boardWidth, int boardHeight) {
+  return {20 * 2 + 30 * boardWidth, 20 * 3 + 60 + 30 * boardHeight};
+}
 
 class Game {
 public:
-  Game(std::shared_ptr<Renderer> renderer, const int boardWidth,
-       const int boardHeight, const int numberOfMines);
-  const bool OnClick(const int px, const int py, const MouseButton button);
-  const bool Update(const int time);
+  Game(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight,
+       int numberOfMines);
+  bool OnClick(int px, int py, MouseButton button);
+  bool Update(int time);
   void Render();
   void SetStartTime(int startTime);
 
@@ -37,7 +39,7 @@ private:
   void RenderBackground();
   void RenderCounter();
   void RenderTimer();
-  void RenderNumber(const int px, const int py, const int n);
+  void RenderNumber(int px, int py, int n);
   void RenderRestartButton();
 };
 } // namespace Minesweeper

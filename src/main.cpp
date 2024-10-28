@@ -6,11 +6,11 @@
 #include <memory>
 
 int main() {
-  const int boardWidth{10};
-  const int boardHeight{10};
-  const int numberOfMines{10};
+  int boardWidth{10};
+  int boardHeight{10};
+  int numberOfMines{10};
 
-  const auto windowSize = Minesweeper::GetWindowSize(boardWidth, boardHeight);
+  auto windowSize = Minesweeper::GetWindowSize(boardWidth, boardHeight);
 
   // INIT SDL
 
@@ -106,7 +106,7 @@ int main() {
 
     Uint32 endTicks{SDL_GetTicks()};
 
-    const float fps{1.0f / ((endTicks - startTicks) / 1000.0f)};
+    float fps{1.0f / ((endTicks - startTicks) / 1000.0f)};
 
     if (++frameCount == 60) {
       frameCount = 0;
