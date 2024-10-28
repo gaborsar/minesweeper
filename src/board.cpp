@@ -40,22 +40,22 @@ namespace Minesweeper
         const int y = 20 + 60 + 20;
         const int w = m_boardWidth * 30;
         const int h = m_boardHeight * 30;
-        return { x, y, w, h };
+        return {x, y, w, h};
     }
 
     const bool Board::OnClick(const int px, const int py)
     {
-        const int x { px / 30 };
+        const int x{px / 30};
         if (x < 0 || x > m_boardWidth - 1)
         {
             return false;
         }
-        const int y { py / 30 };
+        const int y{py / 30};
         if (y < 0 || y > m_boardHeight - 1)
         {
             return false;
         }
-        const int i { PosToIndex(x, y) };
+        const int i{PosToIndex(x, y)};
         if (m_blocks[i]->IsOpen)
         {
             return false;
@@ -146,8 +146,8 @@ namespace Minesweeper
                         {
                             continue;
                         }
-                        const int g1 { m_blocks[i1]->Group };
-                        const int g2 { m_blocks[i2]->Group };
+                        const int g1{m_blocks[i1]->Group};
+                        const int g2{m_blocks[i2]->Group};
                         if (g1 == g2)
                         {
                             continue;

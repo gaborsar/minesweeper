@@ -5,7 +5,7 @@ namespace Minesweeper
     Renderer::Renderer(SDL_Renderer *renderer, SDL_Texture *texture)
         : m_renderer{renderer}, m_texture{texture} {}
 
-    void Renderer::RenderSprite(const int px, const int py, const Sprite& sprite)
+    void Renderer::RenderSprite(const int px, const int py, const Sprite &sprite)
     {
         SDL_Rect srcRect;
         srcRect.x = sprite.x;

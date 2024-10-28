@@ -32,14 +32,17 @@ namespace Minesweeper
     const bool Game::Update(int time)
     {
         m_updateTime = time;
-        if (m_elapsedTime >= 999) {
+        if (m_elapsedTime >= 999)
+        {
             return false;
         }
         int elapsedTime = (m_updateTime - m_startTime) / 1000;
-        if (elapsedTime > 999) {
+        if (elapsedTime > 999)
+        {
             elapsedTime = 999;
         }
-        if (elapsedTime == m_elapsedTime) {
+        if (elapsedTime == m_elapsedTime)
+        {
             return false;
         }
         m_elapsedTime = elapsedTime;
