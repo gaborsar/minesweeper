@@ -113,10 +113,7 @@ namespace Minesweeper
     {
         const int x1{30};
         const int y{30};
-        m_renderer->RenderSprite(x1, y, Sprites::DigitBorder);
-        m_renderer->RenderSprite(x1 + 2, y + 2, Sprites::DigitNone);
-        m_renderer->RenderSprite(x1 + 2 + 20, y + 2, Sprites::Digit0);
-        m_renderer->RenderSprite(x1 + 2 + 40, y + 2, Sprites::Digit1);
+        RenderNumber(30, 30, m_numberOfMines);
     }
 
     void Game::RenderTimer()
@@ -155,8 +152,8 @@ namespace Minesweeper
 
     void Game::RenderRestartButton()
     {
-        const int x{20 + m_boardWidth * 30 / 2 - 15};
-        const int y{35};
+        const int x{20 + m_boardWidth * 30 / 2 - 18};
+        const int y{20 + 12};
         m_renderer->RenderSprite(x, y, Sprites::RestartButtonHappy);
     }
 }

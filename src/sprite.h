@@ -59,7 +59,7 @@ namespace Minesweeper
             Digit8,
             Digit9};
 
-        inline constexpr Sprite RestartButtonHappy{64, 87, 30, 30};
-        inline constexpr Sprite RestartButtonSad{94, 87, 30, 30};
+        inline constexpr Sprite RestartButtonHappy{64, 87, 36, 36};
+        inline constexpr Sprite RestartButtonSad{100, 87, 36, 36};
     }
 }
