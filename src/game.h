@@ -33,7 +33,7 @@ private:
   int m_startTime{0};
   int m_updateTime{0};
   int m_elapsedTime{0};
-  std::unique_ptr<Board> m_board{};
+  std::unique_ptr<Board> m_board;
 
 private:
   void RenderBackground();

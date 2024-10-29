@@ -29,7 +29,7 @@ private:
   std::shared_ptr<Renderer> m_renderer;
   int m_boardWidth{0};
   int m_boardHeight{0};
-  std::vector<std::shared_ptr<Block>> m_blocks{};
+  std::vector<std::shared_ptr<Block>> m_blocks;
 
 private:
   void PlaceMine(int x, int y);
