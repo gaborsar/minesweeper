@@ -157,7 +157,16 @@ void Board::Render() {
       int py{20 + 60 + 20 + y * 30};
       auto block = m_blocks[i];
       if (block->IsOpen) {
-        m_renderer->RenderSprite(px, py, Sprites::BlockOpen);
+        if (block->IsExploded) {
+          m_renderer->RenderSprite(px, py, Sprites::BlockMineExploded);
+          continue;
+        }
+        if (block->IsMine) {
+          m_renderer->RenderSprite(px, py, Sprites::BlockMine);
+          continue;
+        }
+        m_renderer->RenderSprite(px, py,
+                                 Sprites::BlockDigits[block->NearMineCount]);
         continue;
       }
       if (block->IsFlagged) {
