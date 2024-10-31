@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Entity.h"
-#include "Mouse.h"
 #include "Renderer.h"
+#include "Rect.h"
 #include <memory>
 #include <utility>
 #include <vector>
+#include <random>
 
 namespace Minesweeper
 {
@@ -19,36 +19,31 @@ namespace Minesweeper
         std::pair<int, int> Groups{0, 0};
     };
 
-    enum class BoardStatus
-    {
-        Playing,
-        Lost,
-        Won
-    };
-
-    class Board : public Entity
+    class Level
     {
     public:
-        Board(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int mines);
-        virtual Rect GetBoundingRect() override;
-        virtual bool OnClick(int px, int py, MouseButton button) override;
+        Level(std::shared_ptr<Renderer> renderer, int levelWidth, int levelHeight, int numberOfMines);
+        Rect GetBoundingRect();
+        void OnRestart();
+        bool OnLeftClick(int px, int py);
+        bool OnRightClick(int px, int py);
         void OnRender();
-        BoardStatus GetStatus() { return m_status; }
         int CountFlags();
+        bool HasWon();
+        bool HasLost();
 
     private:
         std::shared_ptr<Renderer> m_renderer;
-        BoardStatus m_status{BoardStatus::Playing};
-        int m_boardWidth{0};
-        int m_boardHeight{0};
+        std::mt19937 m_mt;
+        int m_levelWidth{0};
+        int m_levelHeight{0};
+        int m_numberOfMines{0};
         std::vector<std::shared_ptr<Block>> m_blocks;
 
     private:
         void PlaceMine(int x, int y);
         void CreateGroups();
         inline void MergeGroups(int a, int b);
-        bool OnLeftClick(int i);
-        bool OnRightClick(int i);
-        inline int PosToIndex(int x, int y) { return y * m_boardWidth + x; }
+        inline int PosToIndex(int x, int y) { return y * m_levelWidth + x; }
     };
 } // namespace Minesweeper

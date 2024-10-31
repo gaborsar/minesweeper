@@ -2,31 +2,73 @@
 
 namespace Minesweeper
 {
-    Game::Game(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int numberOfMines)
-        : m_renderer{renderer}, m_boardWidth{boardWidth}, m_boardHeight{boardHeight}, m_numberOfMines{numberOfMines}
+    Game::Game(std::shared_ptr<Renderer> renderer, int levelWidth, int levelHeight, int numberOfMines, int time)
+        : m_renderer{renderer}, m_levelWidth{levelWidth}, m_levelHeight{levelHeight}, m_numberOfMines{numberOfMines}, m_startTime{time}, m_updateTime{time}
     {
-        m_board = std::make_unique<Board>(renderer, boardWidth, boardHeight, numberOfMines);
+        m_restartButton = std::make_unique<RestartButton>(renderer, levelWidth, levelHeight);
+        m_level = std::make_unique<Level>(renderer, levelWidth, levelHeight, numberOfMines);
     }
 
-    void Game::SetStartTime(int startTime)
+    bool Game::OnLeftClick(int px, int py)
     {
-        m_startTime = startTime;
-        m_updateTime = startTime;
-    }
-
-    bool Game::OnClick(int px, int py, MouseButton button)
-    {
-        Rect rect = m_board->GetBoundingRect();
-        if (IsPointWithinRect(rect, px, py))
+        Rect btnRect{m_restartButton->GetBoundingRect()};
+        if (IsPointWithinRect(btnRect, px, py))
         {
-            return m_board->OnClick(px - rect.x, py - rect.y, button);
+            m_status = GameStatus::Playing;
+            m_startTime = m_updateTime;
+            m_restartButton->MakeHappy();
+            m_level->OnRestart();
+            return true;
         }
+
+        if (m_status != GameStatus::Playing)
+        {
+            return false;
+        }
+
+        Rect levelRect{m_level->GetBoundingRect()};
+        if (IsPointWithinRect(levelRect, px, py))
+        {
+            bool hasChanged{m_level->OnLeftClick(px - levelRect.x, py - levelRect.y)};
+            if (!hasChanged)
+            {
+                return false;
+            }
+            if (m_level->HasWon())
+            {
+                m_status = GameStatus::Won;
+            }
+            else if (m_level->HasLost())
+            {
+                m_status = GameStatus::Lost;
+                m_restartButton->MakeSad();
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Game::OnRightClick(int px, int py)
+    {
+        if (m_status != GameStatus::Playing)
+        {
+            return false;
+        }
+
+        Rect levelRect{m_level->GetBoundingRect()};
+        if (IsPointWithinRect(levelRect, px, py))
+        {
+            return m_level->OnRightClick(px - levelRect.x, py - levelRect.y);
+        }
+
         return false;
     }
 
     bool Game::OnUpdate(int time)
     {
-        if (m_board->GetStatus() != BoardStatus::Playing) {
+        if (m_status != GameStatus::Playing)
+        {
             return false;
         }
         m_updateTime = time;
@@ -34,7 +76,7 @@ namespace Minesweeper
         {
             return false;
         }
-        int elapsedTime = (m_updateTime - m_startTime) / 1000;
+        int elapsedTime{(m_updateTime - m_startTime) / 1000};
         if (elapsedTime > 999)
         {
             elapsedTime = 999;
@@ -52,18 +94,18 @@ namespace Minesweeper
         RenderBackground();
         RenderCounter();
         RenderTimer();
-        RenderRestartButton();
-        m_board->OnRender();
+        m_restartButton->OnRender();
+        m_level->OnRender();
     }
 
     void Game::RenderBackground()
     {
         int x1{0};
-        int x2{20 + m_boardWidth * 30};
+        int x2{20 + m_levelWidth * 30};
 
         int y1{0};
         int y2{20 + 60};
-        int y3{y2 + 20 + m_boardHeight * 30};
+        int y3{y2 + 20 + m_levelHeight * 30};
 
         m_renderer->RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
         m_renderer->RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
@@ -74,7 +116,7 @@ namespace Minesweeper
         m_renderer->RenderSprite(x1, y2, Sprites::FrameLeftJoint);
         m_renderer->RenderSprite(x2, y2, Sprites::FrameRightJoint);
 
-        for (int i{0}; i < m_boardWidth * 3; ++i)
+        for (int i{0}; i < m_levelWidth * 3; ++i)
         {
             int x{20 + i * 10};
             m_renderer->RenderSprite(x, y1, Sprites::FrameHorizontal);
@@ -89,7 +131,7 @@ namespace Minesweeper
             m_renderer->RenderSprite(x2, y, Sprites::FrameVertical);
         }
 
-        for (int i{0}; i < m_boardHeight * 3; ++i)
+        for (int i{0}; i < m_levelHeight * 3; ++i)
         {
             int y{y2 + 20 + i * 10};
             m_renderer->RenderSprite(x1, y, Sprites::FrameVertical);
@@ -98,7 +140,7 @@ namespace Minesweeper
 
         for (int i{0}; i < 6; ++i)
         {
-            for (int j{0}; j < m_boardWidth * 3; ++j)
+            for (int j{0}; j < m_levelWidth * 3; ++j)
             {
                 int x{20 + j * 10};
                 int y{20 + i * 10};
@@ -111,7 +153,7 @@ namespace Minesweeper
     {
         int x1{30};
         int y{30};
-        int count = m_numberOfMines - m_board->CountFlags();
+        int count{m_numberOfMines - m_level->CountFlags()};
         if (count < 0)
         {
             count = 0;
@@ -121,19 +163,19 @@ namespace Minesweeper
 
     void Game::RenderTimer()
     {
-        int x{20 + m_boardWidth * 30 - 64 - 10};
+        int x{20 + m_levelWidth * 30 - 64 - 10};
         int y{30};
         RenderNumber(x, y, m_elapsedTime);
     }
 
     void Game::RenderNumber(int px, int py, int n)
     {
-        int d3 = n;
+        int d3{n};
 
-        int d1 = n / 100;
+        int d1{n / 100};
         d3 = d3 % 100;
 
-        int d2 = d3 / 10;
+        int d2{d3 / 10};
         d3 = d3 % 10;
 
         assert(d1 >= 0 && d1 <= 9);
@@ -155,7 +197,7 @@ namespace Minesweeper
 
     void Game::RenderRestartButton()
     {
-        int x{20 + m_boardWidth * 30 / 2 - 18};
+        int x{20 + m_levelWidth * 30 / 2 - 18};
         int y{20 + 12};
         m_renderer->RenderSprite(x, y, Sprites::RestartButtonHappy);
     }
