@@ -30,7 +30,7 @@ namespace Minesweeper
     {
     public:
         Board(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int mines);
-        virtual Rect GetBox() override;
+        virtual Rect GetBoundingRect() override;
         virtual bool OnClick(int px, int py, MouseButton button) override;
         void OnRender();
         BoardStatus GetStatus() { return m_status; }

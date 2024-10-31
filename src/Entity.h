@@ -9,7 +9,7 @@ namespace Minesweeper
     {
     public:
         virtual ~Entity() = default;
-        virtual Rect GetBox() = 0;
+        virtual Rect GetBoundingRect() = 0;
         virtual bool OnClick(int px, int py, MouseButton button) = 0;
     };
 } // namespace Minesweeper

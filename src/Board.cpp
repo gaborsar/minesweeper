@@ -177,7 +177,7 @@ namespace Minesweeper
         }
     }
 
-    Rect Board::GetBox()
+    Rect Board::GetBoundingRect()
     {
         int x = 20;
         int y = 20 + 60 + 20;
@@ -305,7 +305,7 @@ namespace Minesweeper
 
     int Board::CountFlags()
     {
-        return std::count_if(m_blocks.begin(), m_blocks.end(), [](auto &block)
+        return std::count_if(m_blocks.begin(), m_blocks.end(), [](const auto &block)
                              { return block->IsFlagged; });
     }
 

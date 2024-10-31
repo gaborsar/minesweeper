@@ -16,10 +16,10 @@ namespace Minesweeper
 
     bool Game::OnClick(int px, int py, MouseButton button)
     {
-        Rect box = m_board->GetBox();
-        if (IsWithin(box, px, py))
+        Rect rect = m_board->GetBoundingRect();
+        if (IsPointWithinRect(rect, px, py))
         {
-            return m_board->OnClick(px - box.x, py - box.y, button);
+            return m_board->OnClick(px - rect.x, py - rect.y, button);
         }
         return false;
     }
