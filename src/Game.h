@@ -23,10 +23,10 @@ namespace Minesweeper
     {
     public:
         Game(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int numberOfMines);
-        bool OnClick(int px, int py, MouseButton button);
-        bool Update(int time);
-        void Render();
         void SetStartTime(int startTime);
+        bool OnClick(int px, int py, MouseButton button);
+        bool OnUpdate(int time);
+        void OnRender();
 
     private:
         std::shared_ptr<Renderer> m_renderer;

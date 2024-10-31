@@ -1,7 +1,6 @@
 #include "Board.h"
 #include <algorithm>
 #include <cassert>
-#include <iostream>
 #include <random>
 
 namespace Minesweeper
@@ -69,6 +68,7 @@ namespace Minesweeper
                 m_blocks[i]->Groups.first = i + 1;
             }
         }
+
         for (int y1{0}; y1 < m_boardHeight; ++y1)
         {
             for (int x1{0}; x1 < m_boardWidth; ++x1)
@@ -115,6 +115,7 @@ namespace Minesweeper
                 }
             }
         }
+
         for (int y1{0}; y1 < m_boardHeight; ++y1)
         {
             for (int x1{0}; x1 < m_boardWidth; ++x1)
@@ -187,6 +188,10 @@ namespace Minesweeper
 
     bool Board::OnClick(int px, int py, MouseButton button)
     {
+        if (m_status != BoardStatus::Playing)
+        {
+            return false;
+        }
         int x{px / 30};
         if (x < 0 || x > m_boardWidth - 1)
         {
@@ -210,7 +215,10 @@ namespace Minesweeper
 
     bool Board::OnLeftClick(int i)
     {
-        std::cout << "left" << std::endl;
+        if (m_status != BoardStatus::Playing)
+        {
+            return false;
+        }
         auto &block = m_blocks[i];
         if (block->IsOpen || block->IsFlagged)
         {
@@ -225,16 +233,25 @@ namespace Minesweeper
                 block->IsFlagged = false;
             }
             block->IsExploded = true;
+            m_status = BoardStatus::Lost;
         }
-        else if (block->NearMineCount == 0)
+        else
         {
-            int g = block->Groups.first;
-            for (auto &block : m_blocks)
+            if (block->NearMineCount == 0)
             {
-                if (!block->IsFlagged && (block->Groups.first == g || block->Groups.second == g))
+                int g = block->Groups.first;
+                for (auto &block : m_blocks)
                 {
-                    block->IsOpen = true;
+                    if (!block->IsFlagged && (block->Groups.first == g || block->Groups.second == g))
+                    {
+                        block->IsOpen = true;
+                    }
                 }
+            }
+            if (std::all_of(m_blocks.begin(), m_blocks.end(), [](const auto &block)
+                            { return block->IsMine || block->IsOpen; }))
+            {
+                m_status = BoardStatus::Won;
             }
         }
         return true;
@@ -242,7 +259,6 @@ namespace Minesweeper
 
     bool Board::OnRightClick(int i)
     {
-        std::cout << "right" << std::endl;
         auto &block = m_blocks[i];
         if (block->IsOpen)
         {
@@ -252,7 +268,7 @@ namespace Minesweeper
         return true;
     }
 
-    void Board::Render()
+    void Board::OnRender()
     {
         for (int y{0}; y < m_boardHeight; ++y)
         {
@@ -293,5 +309,4 @@ namespace Minesweeper
                              { return block->IsFlagged; });
     }
 
-    inline int Board::PosToIndex(int x, int y) { return y * m_boardWidth + x; }
 } // namespace Minesweeper

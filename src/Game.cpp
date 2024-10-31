@@ -24,8 +24,11 @@ namespace Minesweeper
         return false;
     }
 
-    bool Game::Update(int time)
+    bool Game::OnUpdate(int time)
     {
+        if (m_board->GetStatus() != BoardStatus::Playing) {
+            return false;
+        }
         m_updateTime = time;
         if (m_elapsedTime >= 999)
         {
@@ -44,13 +47,13 @@ namespace Minesweeper
         return true;
     }
 
-    void Game::Render()
+    void Game::OnRender()
     {
         RenderBackground();
         RenderCounter();
         RenderTimer();
         RenderRestartButton();
-        m_board->Render();
+        m_board->OnRender();
     }
 
     void Game::RenderBackground()

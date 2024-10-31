@@ -85,20 +85,19 @@ int main()
                     shouldRender = shouldRender || game->OnClick(event.button.x, event.button.y, Minesweeper::MouseButton::Left);
                     break;
                 case SDL_BUTTON_RIGHT:
-                    shouldRender =
-                        shouldRender || game->OnClick(event.button.x, event.button.y, Minesweeper::MouseButton::Right);
+                    shouldRender = shouldRender || game->OnClick(event.button.x, event.button.y, Minesweeper::MouseButton::Right);
                     break;
                 }
                 continue;
             }
         }
 
-        shouldRender = shouldRender || game->Update(startTicks);
+        shouldRender = shouldRender || game->OnUpdate(startTicks);
 
         if (shouldRender)
         {
             SDL_RenderClear(sdlRenderer);
-            game->Render();
+            game->OnRender();
             SDL_RenderPresent(sdlRenderer);
             shouldRender = false;
         }

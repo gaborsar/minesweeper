@@ -19,17 +19,26 @@ namespace Minesweeper
         std::pair<int, int> Groups{0, 0};
     };
 
+    enum class BoardStatus
+    {
+        Playing,
+        Lost,
+        Won
+    };
+
     class Board : public Entity
     {
     public:
         Board(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int mines);
         virtual Rect GetBox() override;
         virtual bool OnClick(int px, int py, MouseButton button) override;
-        void Render();
+        void OnRender();
+        BoardStatus GetStatus() { return m_status; }
         int CountFlags();
 
     private:
         std::shared_ptr<Renderer> m_renderer;
+        BoardStatus m_status{BoardStatus::Playing};
         int m_boardWidth{0};
         int m_boardHeight{0};
         std::vector<std::shared_ptr<Block>> m_blocks;
@@ -40,6 +49,6 @@ namespace Minesweeper
         inline void MergeGroups(int a, int b);
         bool OnLeftClick(int i);
         bool OnRightClick(int i);
-        inline int PosToIndex(int x, int y);
+        inline int PosToIndex(int x, int y) { return y * m_boardWidth + x; }
     };
 } // namespace Minesweeper
