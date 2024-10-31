@@ -7,38 +7,40 @@
 #include <utility>
 #include <vector>
 
-namespace Minesweeper {
-struct Block {
-  bool IsOpen{false};
-  bool IsFlagged{false};
-  bool IsMine{false};
-  bool IsExploded{false};
-  int NearMineCount{0};
-  // if the element is a count 0 only the first group has a meaningful value
-  std::pair<int, int> Groups{0, 0};
-};
+namespace Minesweeper
+{
+    struct Block
+    {
+        bool IsOpen{false};
+        bool IsFlagged{false};
+        bool IsMine{false};
+        bool IsExploded{false};
+        int NearMineCount{0};
+        // if the element is a count 0 only the first group has a meaningful value
+        std::pair<int, int> Groups{0, 0};
+    };
 
-class Board : public Entity {
-public:
-  Board(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight,
-        int mines);
-  virtual Rect GetBox() override;
-  virtual bool OnClick(int px, int py, MouseButton button) override;
-  void Render();
-  int CountFlags();
+    class Board : public Entity
+    {
+    public:
+        Board(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight, int mines);
+        virtual Rect GetBox() override;
+        virtual bool OnClick(int px, int py, MouseButton button) override;
+        void Render();
+        int CountFlags();
 
-private:
-  std::shared_ptr<Renderer> m_renderer;
-  int m_boardWidth{0};
-  int m_boardHeight{0};
-  std::vector<std::shared_ptr<Block>> m_blocks;
+    private:
+        std::shared_ptr<Renderer> m_renderer;
+        int m_boardWidth{0};
+        int m_boardHeight{0};
+        std::vector<std::shared_ptr<Block>> m_blocks;
 
-private:
-  void PlaceMine(int x, int y);
-  void CreateGroups();
-  inline void MergeGroups(int a, int b);
-  bool OnLeftClick(int i);
-  bool OnRightClick(int i);
-  inline int PosToIndex(int x, int y);
-};
+    private:
+        void PlaceMine(int x, int y);
+        void CreateGroups();
+        inline void MergeGroups(int a, int b);
+        bool OnLeftClick(int i);
+        bool OnRightClick(int i);
+        inline int PosToIndex(int x, int y);
+    };
 } // namespace Minesweeper
