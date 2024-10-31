@@ -222,6 +222,7 @@ namespace Minesweeper
             for (auto &block : m_blocks)
             {
                 block->IsOpen = true;
+                block->IsFlagged = false;
             }
             block->IsExploded = true;
         }
@@ -230,7 +231,7 @@ namespace Minesweeper
             int g = block->Groups.first;
             for (auto &block : m_blocks)
             {
-                if (block->Groups.first == g || block->Groups.second == g)
+                if (!block->IsFlagged && (block->Groups.first == g || block->Groups.second == g))
                 {
                     block->IsOpen = true;
                 }
