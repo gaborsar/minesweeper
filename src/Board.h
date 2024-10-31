@@ -4,6 +4,7 @@
 #include "Mouse.h"
 #include "Renderer.h"
 #include <memory>
+#include <utility>
 #include <vector>
 
 namespace Minesweeper {
@@ -13,7 +14,8 @@ struct Block {
   bool IsMine{false};
   bool IsExploded{false};
   int NearMineCount{0};
-  int Group{0};
+  // if the element is a count 0 only the first group has a meaningful value
+  std::pair<int, int> Groups{0, 0};
 };
 
 class Board : public Entity {

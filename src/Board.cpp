@@ -54,9 +54,7 @@ void Board::PlaceMine(int x, int y) {
 void Board::CreateGroups() {
   for (int i{0}; i < m_boardWidth * m_boardHeight; ++i) {
     if (!m_blocks[i]->IsMine && m_blocks[i]->NearMineCount == 0) {
-      m_blocks[i]->Group = i + 1;
-    } else {
-      m_blocks[i]->Group = 0;
+      m_blocks[i]->Groups.first = i + 1;
     }
   }
   for (int y1{0}; y1 < m_boardHeight; ++y1) {
@@ -77,8 +75,8 @@ void Board::CreateGroups() {
           if (m_blocks[i2]->IsMine || m_blocks[i2]->NearMineCount != 0) {
             continue;
           }
-          int g1{m_blocks[i1]->Group};
-          int g2{m_blocks[i2]->Group};
+          int g1{m_blocks[i1]->Groups.first};
+          int g2{m_blocks[i2]->Groups.first};
           if (g1 == g2) {
             continue;
           }
@@ -95,10 +93,10 @@ void Board::CreateGroups() {
 
 inline void Board::MergeGroups(int a, int b) {
   for (int i{0}; i < m_boardWidth * m_boardHeight; ++i) {
-    if (m_blocks[i]->Group != b) {
+    if (m_blocks[i]->Groups.first != b) {
       continue;
     }
-    m_blocks[i]->Group = a;
+    m_blocks[i]->Groups.first = a;
   }
 }
 
