@@ -83,8 +83,8 @@ namespace Minesweeper
             for (int x{0}; x < m_boardWidth; ++x)
             {
                 int i{PosToIndex(x, y)};
-                int px{20 + x * 30};
-                int py{20 + 60 + 20 + y * 30};
+                int px{m_x + x * 30};
+                int py{m_y + y * 30};
                 auto &block{m_blocks[i]};
                 if (block->IsOpen)
                 {
