@@ -53,7 +53,7 @@ int main() {
   int startTime{static_cast<int>(SDL_GetTicks())};
 
   std::unique_ptr<Minesweeper::Window> window{
-      std::make_unique<Minesweeper::Window>(sdlWindow)};
+      std::make_unique<Minesweeper::Window>(sdlWindow, windowSize.w, windowSize.h)};
   std::unique_ptr<Minesweeper::Renderer> renderer{
       std::make_unique<Minesweeper::Renderer>(sdlRenderer, sdlTexture)};
   std::unique_ptr<Minesweeper::Game> game{
@@ -63,7 +63,6 @@ int main() {
 
   bool running{true};
   bool shouldRender{true};
-  int frameCount{0};
 
   SDL_Event event;
   Minesweeper::UserCommand command;
@@ -105,20 +104,17 @@ int main() {
 
     if (shouldRender) {
       SDL_RenderClear(sdlRenderer);
-      window->ApplyUpdates();
       game->OnRender();
       SDL_RenderPresent(sdlRenderer);
       shouldRender = false;
     }
 
-    SDL_Delay(15);
-
     Uint32 endTicks{SDL_GetTicks()};
-    float fps{1.0f / ((endTicks - startTicks) / 1000.0f)};
+    int elapsed = endTicks - startTicks;
 
-    if (++frameCount == 60) {
-      frameCount = 0;
-      std::cout << "fps: " << fps << std::endl;
+    constexpr int targetDelay = 1000 / 60;
+    if (elapsed < targetDelay) {
+      SDL_Delay(targetDelay - elapsed);
     }
   }
 

@@ -40,7 +40,7 @@ void Game::Restart() {
 
     Window &window{Window::Get()};
     Size windowSize{Minesweeper::GetWindowSize(m_config)};
-    window.ScheduleResize(windowSize.w, windowSize.h);
+    window.Resize(windowSize.w, windowSize.h);
 
     int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
     int btnY{20 + 12};
@@ -53,10 +53,6 @@ void Game::Restart() {
                                 m_config.boardHeight, m_config.numberOfMines);
   }
 }
-
-void Game::Win() { m_status = GameStatus::Won; }
-
-void Game::Lose() { m_status = GameStatus::Lost; }
 
 bool Game::OnInput(UserCommand &cmd) {
   if (m_restartButton->OnInput(cmd)) {

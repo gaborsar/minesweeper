@@ -35,8 +35,8 @@ public:
 
   GameStatus GetStatus() { return m_status; }
   void Restart();
-  void Win();
-  void Lose();
+  void Win() { m_status = GameStatus::Won; }
+  void Lose() { m_status = GameStatus::Lost; }
 
 private:
   GameStatus m_status{GameStatus::Playing};
