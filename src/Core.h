@@ -2,6 +2,12 @@
 
 namespace Minesweeper
 {
+    struct Size
+    {
+        int w;
+        int h;
+    };
+
     struct Rect
     {
         int x, y;
@@ -12,4 +18,4 @@ namespace Minesweeper
     {
         return px >= rect.x && px < rect.x + rect.w && py >= rect.y && py < rect.y + rect.w;
     }
-} // namespace Minesweeper
+}

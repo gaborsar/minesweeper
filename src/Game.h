@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Level.h"
-#include "Renderer.h"
-#include "Size.h"
+#include "Board.h"
+#include "Core.h"
+#include "Input.h"
 #include "RestartButton.h"
-#include <cassert>
 #include <memory>
 
 namespace Minesweeper
 {
-    inline constexpr Size GetWindowSize(int levelWidth, int levelHeight)
+    inline constexpr Size GetWindowSize(int boardWidth, int boardHeight)
     {
-        return {20 * 2 + 30 * levelWidth, 20 * 3 + 60 + 30 * levelHeight};
+        return {20 * 2 + 30 * boardWidth, 20 * 3 + 60 + 30 * boardHeight};
     }
 
     enum class GameStatus
@@ -24,25 +23,35 @@ namespace Minesweeper
     class Game
     {
     public:
-        Game(std::shared_ptr<Renderer> renderer, int levelWidth, int levelHeight, int numberOfMines, int time);
-        bool OnLeftClick(int px, int py);
-        bool OnRightClick(int px, int py);
+        Game(int boardWidth, int boardHeight, int numberOfMines, int time);
+        static Game &Get();
+
+        bool OnInput(UserCommand &command);
         bool OnUpdate(int time);
         void OnRender();
 
+        GameStatus GetStatus() { return m_status; }
+        void Restart();
+        void Win();
+        void Lose();
+
     private:
-        std::shared_ptr<Renderer> m_renderer;
         GameStatus m_status{GameStatus::Playing};
-        int m_levelWidth{0};
-        int m_levelHeight{0};
+
+        int m_boardWidth{0};
+        int m_boardHeight{0};
         int m_numberOfMines{0};
+
         int m_startTime{0};
         int m_updateTime{0};
         int m_elapsedTime{0};
+
         std::unique_ptr<RestartButton> m_restartButton;
-        std::unique_ptr<Level> m_level;
+        std::unique_ptr<Board> m_board;
 
     private:
+        bool OnLeftClick(int px, int py);
+        bool OnRightClick(int px, int py);
         void RenderBackground();
         void RenderCounter();
         void RenderTimer();

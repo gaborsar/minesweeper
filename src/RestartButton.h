@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Renderer.h"
+#include "Input.h"
 #include <memory>
 
 namespace Minesweeper
@@ -8,16 +8,12 @@ namespace Minesweeper
     class RestartButton
     {
     public:
-        RestartButton(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight);
-        Rect GetBoundingRect();
+        RestartButton(int x, int y);
+        bool OnInput(UserCommand &command);
         void OnRender();
-        void MakeHappy() { m_isHappy = true; }
-        void MakeSad() { m_isHappy = false; }
 
     private:
-        std::shared_ptr<Renderer> m_renderer;
-        int m_boardWidth{0};
-        int m_boardHeight{0};
-        bool m_isHappy{true};
+        int m_x{0};
+        int m_y{0};
     };
 }

@@ -1,25 +1,39 @@
+#include "Game.h"
+#include "Renderer.h"
 #include "RestartButton.h"
+#include "Sprites.h"
 
 namespace Minesweeper
 {
-    RestartButton::RestartButton(std::shared_ptr<Renderer> renderer, int boardWidth, int boardHeight)
-        : m_renderer{renderer}, m_boardWidth{boardWidth}, m_boardHeight{boardHeight}
-    {
-    }
+    RestartButton::RestartButton(int x, int y) : m_x{x}, m_y{y} {}
 
-    Rect RestartButton::GetBoundingRect()
+    bool RestartButton::OnInput(UserCommand &command)
     {
-        int x{20 + m_boardWidth * 30 / 2 - 18};
-        int y{20 + 12};
-        int w{36};
-        int h{36};
-        return {x, y, w, h};
-    };
+        if (command.type != UserCommandType::MouseButtonDown || command.mouseButton != MouseButton::Left)
+        {
+            return false;
+        }
+        if (command.mouseX < m_x || command.mouseX > m_x + 36)
+        {
+            return false;
+        }
+        if (command.mouseY < m_y || command.mouseY > m_y + 36)
+        {
+            return false;
+        }
+
+        Game &game{Game::Get()};
+        game.Restart();
+
+        return true;
+    }
 
     void RestartButton::OnRender()
     {
-        int x{20 + m_boardWidth * 30 / 2 - 18};
-        int y{20 + 12};
-        m_renderer->RenderSprite(x, y, m_isHappy ? Sprites::RestartButtonHappy : Sprites::RestartButtonSad);
+        Game &game{Game::Get()};
+        bool isSad{game.GetStatus() == GameStatus::Lost};
+
+        Renderer &renderer{Renderer::Get()};
+        renderer.RenderSprite(m_x, m_y, isSad ? Sprites::RestartButtonSad : Sprites::RestartButtonHappy);
     }
 }

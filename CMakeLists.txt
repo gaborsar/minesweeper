@@ -5,17 +5,16 @@ find_package(SDL2 REQUIRED)
 include_directories(minesweeper ${SDL2_INCLUDE_DIRS})
 
 add_executable(minesweeper
+    src/Board.cpp
+    src/Board.h
+    src/Core.h
     src/Game.cpp
     src/Game.h
-    src/Level.cpp
-    src/Level.h
     src/main.cpp
-    src/Rect.h
     src/Renderer.cpp
     src/Renderer.h
     src/RestartButton.cpp
     src/RestartButton.h
-    src/Size.h
     src/Sprite.h
 )
 

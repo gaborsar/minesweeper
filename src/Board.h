@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Renderer.h"
-#include "Rect.h"
+#include "Core.h"
+#include "Input.h"
 #include <memory>
+#include <random>
 #include <utility>
 #include <vector>
-#include <random>
 
 namespace Minesweeper
 {
@@ -19,31 +19,36 @@ namespace Minesweeper
         std::pair<int, int> Groups{0, 0};
     };
 
-    class Level
+    class Board
     {
     public:
-        Level(std::shared_ptr<Renderer> renderer, int levelWidth, int levelHeight, int numberOfMines);
-        Rect GetBoundingRect();
-        void OnRestart();
-        bool OnLeftClick(int px, int py);
-        bool OnRightClick(int px, int py);
+        Board(int x, int y, int boardWidth, int boardHeight, int numberOfMines);
+        void Init();
+
+        bool OnInput(UserCommand &command);
         void OnRender();
-        int CountFlags();
-        bool HasWon();
-        bool HasLost();
+
+        int GetNumberOfFlags();
 
     private:
-        std::shared_ptr<Renderer> m_renderer;
         std::mt19937 m_mt;
-        int m_levelWidth{0};
-        int m_levelHeight{0};
+
+        int m_x{0};
+        int m_y{0};
+
+        int m_boardWidth{0};
+        int m_boardHeight{0};
         int m_numberOfMines{0};
+
         std::vector<std::shared_ptr<Block>> m_blocks;
 
-    private:
         void PlaceMine(int x, int y);
         void CreateGroups();
         inline void MergeGroups(int a, int b);
-        inline int PosToIndex(int x, int y) { return y * m_levelWidth + x; }
+
+        bool OnLeftClick(int px, int py);
+        bool OnRightClick(int px, int py);
+
+        inline int PosToIndex(int x, int y) { return y * m_boardWidth + x; }
     };
 } // namespace Minesweeper

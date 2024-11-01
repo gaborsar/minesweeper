@@ -1,67 +1,58 @@
 #include "Game.h"
+#include "Renderer.h"
+#include "Sprites.h"
+#include <cassert>
 
 namespace Minesweeper
 {
-    Game::Game(std::shared_ptr<Renderer> renderer, int levelWidth, int levelHeight, int numberOfMines, int time)
-        : m_renderer{renderer}, m_levelWidth{levelWidth}, m_levelHeight{levelHeight}, m_numberOfMines{numberOfMines}, m_startTime{time}, m_updateTime{time}
+    static Game *m_instance{nullptr};
+
+    Game::Game(int boardWidth, int boardHeight, int numberOfMines, int time)
+        : m_boardWidth{boardWidth}, m_boardHeight{boardHeight}, m_numberOfMines{numberOfMines}, m_startTime{time}, m_updateTime{time}
     {
-        m_restartButton = std::make_unique<RestartButton>(renderer, levelWidth, levelHeight);
-        m_level = std::make_unique<Level>(renderer, levelWidth, levelHeight, numberOfMines);
+        int btnX{20 + boardWidth * 30 / 2 - 18};
+        int btnY{20 + 12};
+        m_restartButton = std::make_unique<RestartButton>(btnX, btnY);
+
+        int boardX{20};
+        int boardY{20 + 60 + 20};
+        m_board = std::make_unique<Board>(boardX, boardY, boardWidth, boardHeight, numberOfMines);
+
+        m_instance = this;
     }
 
-    bool Game::OnLeftClick(int px, int py)
+    Game &Game::Get()
     {
-        Rect btnRect{m_restartButton->GetBoundingRect()};
-        if (IsPointWithinRect(btnRect, px, py))
-        {
-            m_status = GameStatus::Playing;
-            m_startTime = m_updateTime;
-            m_restartButton->MakeHappy();
-            m_level->OnRestart();
-            return true;
-        }
-
-        if (m_status != GameStatus::Playing)
-        {
-            return false;
-        }
-
-        Rect levelRect{m_level->GetBoundingRect()};
-        if (IsPointWithinRect(levelRect, px, py))
-        {
-            bool hasChanged{m_level->OnLeftClick(px - levelRect.x, py - levelRect.y)};
-            if (!hasChanged)
-            {
-                return false;
-            }
-            if (m_level->HasWon())
-            {
-                m_status = GameStatus::Won;
-            }
-            else if (m_level->HasLost())
-            {
-                m_status = GameStatus::Lost;
-                m_restartButton->MakeSad();
-            }
-            return true;
-        }
-
-        return false;
+        return *m_instance;
     }
 
-    bool Game::OnRightClick(int px, int py)
+    void Game::Restart()
     {
-        if (m_status != GameStatus::Playing)
-        {
-            return false;
-        }
+        m_status = GameStatus::Playing;
+        m_startTime = m_updateTime;
+        m_board->Init();
+    }
 
-        Rect levelRect{m_level->GetBoundingRect()};
-        if (IsPointWithinRect(levelRect, px, py))
-        {
-            return m_level->OnRightClick(px - levelRect.x, py - levelRect.y);
-        }
+    void Game::Win()
+    {
+        m_status = GameStatus::Won;
+    }
 
+    void Game::Lose()
+    {
+        m_status = GameStatus::Lost;
+    }
+
+    bool Game::OnInput(UserCommand &command)
+    {
+        if (m_restartButton->OnInput(command))
+        {
+            return true;
+        }
+        if (m_status == GameStatus::Playing && m_board->OnInput(command))
+        {
+            return true;
+        }
         return false;
     }
 
@@ -95,56 +86,58 @@ namespace Minesweeper
         RenderCounter();
         RenderTimer();
         m_restartButton->OnRender();
-        m_level->OnRender();
+        m_board->OnRender();
     }
 
     void Game::RenderBackground()
     {
         int x1{0};
-        int x2{20 + m_levelWidth * 30};
+        int x2{20 + m_boardWidth * 30};
 
         int y1{0};
         int y2{20 + 60};
-        int y3{y2 + 20 + m_levelHeight * 30};
+        int y3{y2 + 20 + m_boardHeight * 30};
 
-        m_renderer->RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
-        m_renderer->RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
+        Renderer &renderer{Renderer::Get()};
 
-        m_renderer->RenderSprite(x1, y3, Sprites::FrameBottomLeftCorner);
-        m_renderer->RenderSprite(x2, y3, Sprites::FrameBottomRightCorner);
+        renderer.RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
+        renderer.RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
 
-        m_renderer->RenderSprite(x1, y2, Sprites::FrameLeftJoint);
-        m_renderer->RenderSprite(x2, y2, Sprites::FrameRightJoint);
+        renderer.RenderSprite(x1, y3, Sprites::FrameBottomLeftCorner);
+        renderer.RenderSprite(x2, y3, Sprites::FrameBottomRightCorner);
 
-        for (int i{0}; i < m_levelWidth * 3; ++i)
+        renderer.RenderSprite(x1, y2, Sprites::FrameLeftJoint);
+        renderer.RenderSprite(x2, y2, Sprites::FrameRightJoint);
+
+        for (int i{0}; i < m_boardWidth * 3; ++i)
         {
             int x{20 + i * 10};
-            m_renderer->RenderSprite(x, y1, Sprites::FrameHorizontal);
-            m_renderer->RenderSprite(x, y2, Sprites::FrameHorizontal);
-            m_renderer->RenderSprite(x, y3, Sprites::FrameHorizontal);
+            renderer.RenderSprite(x, y1, Sprites::FrameHorizontal);
+            renderer.RenderSprite(x, y2, Sprites::FrameHorizontal);
+            renderer.RenderSprite(x, y3, Sprites::FrameHorizontal);
         }
 
         for (int i{0}; i < 6; ++i)
         {
             int y{20 + i * 10};
-            m_renderer->RenderSprite(x1, y, Sprites::FrameVertical);
-            m_renderer->RenderSprite(x2, y, Sprites::FrameVertical);
+            renderer.RenderSprite(x1, y, Sprites::FrameVertical);
+            renderer.RenderSprite(x2, y, Sprites::FrameVertical);
         }
 
-        for (int i{0}; i < m_levelHeight * 3; ++i)
+        for (int i{0}; i < m_boardHeight * 3; ++i)
         {
             int y{y2 + 20 + i * 10};
-            m_renderer->RenderSprite(x1, y, Sprites::FrameVertical);
-            m_renderer->RenderSprite(x2, y, Sprites::FrameVertical);
+            renderer.RenderSprite(x1, y, Sprites::FrameVertical);
+            renderer.RenderSprite(x2, y, Sprites::FrameVertical);
         }
 
         for (int i{0}; i < 6; ++i)
         {
-            for (int j{0}; j < m_levelWidth * 3; ++j)
+            for (int j{0}; j < m_boardWidth * 3; ++j)
             {
                 int x{20 + j * 10};
                 int y{20 + i * 10};
-                m_renderer->RenderSprite(x, y, Sprites::FrameBase);
+                renderer.RenderSprite(x, y, Sprites::FrameBase);
             }
         }
     }
@@ -153,7 +146,7 @@ namespace Minesweeper
     {
         int x1{30};
         int y{30};
-        int count{m_numberOfMines - m_level->CountFlags()};
+        int count{m_numberOfMines - m_board->GetNumberOfFlags()};
         if (count < 0)
         {
             count = 0;
@@ -163,7 +156,7 @@ namespace Minesweeper
 
     void Game::RenderTimer()
     {
-        int x{20 + m_levelWidth * 30 - 64 - 10};
+        int x{20 + m_boardWidth * 30 - 64 - 10};
         int y{30};
         RenderNumber(x, y, m_elapsedTime);
     }
@@ -182,23 +175,26 @@ namespace Minesweeper
         assert(d2 >= 0 && d2 <= 9);
         assert(d3 >= 0 && d3 <= 9);
 
-        m_renderer->RenderSprite(px, py, Sprites::DigitBorder);
-        m_renderer->RenderSprite(px + 2, py + 2, Sprites::LeftDigits[d1]);
+        Renderer &renderer{Renderer::Get()};
+
+        renderer.RenderSprite(px, py, Sprites::DigitBorder);
+        renderer.RenderSprite(px + 2, py + 2, Sprites::LeftDigits[d1]);
         if (d1 == 0)
         {
-            m_renderer->RenderSprite(px + 2 + 20, py + 2, Sprites::LeftDigits[d2]);
+            renderer.RenderSprite(px + 2 + 20, py + 2, Sprites::LeftDigits[d2]);
         }
         else
         {
-            m_renderer->RenderSprite(px + 2 + 20, py + 2, Sprites::RightDigits[d2]);
+            renderer.RenderSprite(px + 2 + 20, py + 2, Sprites::RightDigits[d2]);
         }
-        m_renderer->RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
+        renderer.RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
     }
 
     void Game::RenderRestartButton()
     {
-        int x{20 + m_levelWidth * 30 / 2 - 18};
+        int x{20 + m_boardWidth * 30 / 2 - 18};
         int y{20 + 12};
-        m_renderer->RenderSprite(x, y, Sprites::RestartButtonHappy);
+        Renderer &renderer{Renderer::Get()};
+        renderer.RenderSprite(x, y, Sprites::RestartButtonHappy);
     }
 } // namespace Minesweeper

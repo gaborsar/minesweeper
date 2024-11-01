@@ -2,10 +2,19 @@
 
 namespace Minesweeper
 {
-    Renderer::Renderer(SDL_Renderer *renderer, SDL_Texture *texture)
-        : m_renderer{renderer}, m_texture{texture} {}
+    static Renderer *m_instance{nullptr};
 
-    void Renderer::RenderSprite(int px, int py, const Sprite &sprite)
+    Renderer::Renderer(SDL_Renderer *renderer, SDL_Texture *texture) : m_renderer{renderer}, m_texture{texture}
+    {
+        m_instance = this;
+    }
+
+    Renderer &Renderer::Get()
+    {
+        return *m_instance;
+    }
+
+    void Renderer::RenderSprite(int px, int py, const Rect &sprite)
     {
         SDL_Rect srcRect;
         srcRect.x = sprite.x;

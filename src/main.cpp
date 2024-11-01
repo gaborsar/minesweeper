@@ -1,8 +1,9 @@
 #include "Game.h"
+#include "Input.h"
 #include "Renderer.h"
-#include <SDL2/SDL.h>
 #include <iostream>
 #include <memory>
+#include <SDL2/SDL.h>
 
 int main()
 {
@@ -56,7 +57,7 @@ int main()
     int startTime{static_cast<int>(SDL_GetTicks())};
 
     auto renderer{std::make_shared<Minesweeper::Renderer>(sdlRenderer, sdlTexture)};
-    auto game{std::make_unique<Minesweeper::Game>(renderer, boardWidth, boardHeight, numberOfMines, startTime)};
+    auto game{std::make_unique<Minesweeper::Game>(boardWidth, boardHeight, numberOfMines, startTime)};
 
     // MAIN LOOP
 
@@ -65,6 +66,7 @@ int main()
     int frameCount{0};
 
     SDL_Event event;
+    Minesweeper::UserCommand command;
 
     while (running)
     {
@@ -81,10 +83,12 @@ int main()
                 switch (event.button.button)
                 {
                 case SDL_BUTTON_LEFT:
-                    shouldRender = shouldRender || game->OnLeftClick(event.button.x, event.button.y);
+                    command = {Minesweeper::UserCommandType::MouseButtonDown, Minesweeper::MouseButton::Left, event.button.x, event.button.y};
+                    shouldRender = shouldRender || game->OnInput(command);
                     break;
                 case SDL_BUTTON_RIGHT:
-                    shouldRender = shouldRender || game->OnRightClick(event.button.x, event.button.y);
+                    command = {Minesweeper::UserCommandType::MouseButtonDown, Minesweeper::MouseButton::Right, event.button.x, event.button.y};
+                    shouldRender = shouldRender || game->OnInput(command);
                     break;
                 }
                 continue;
