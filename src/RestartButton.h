@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Input.h"
-#include <memory>
 
 namespace Minesweeper
 {
