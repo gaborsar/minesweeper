@@ -7,17 +7,17 @@ namespace Minesweeper
 {
     RestartButton::RestartButton(int x, int y) : m_x{x}, m_y{y} {}
 
-    bool RestartButton::OnInput(UserCommand &command)
+    bool RestartButton::OnInput(UserCommand &cmd)
     {
-        if (command.type != UserCommandType::MouseButtonDown || command.mouseButton != MouseButton::Left)
+        if (cmd.type != UserCommandType::MouseButtonDown || cmd.mouseButton != MouseButton::Left)
         {
             return false;
         }
-        if (command.mouseX < m_x || command.mouseX > m_x + 36)
+        if (cmd.mouseX < m_x || cmd.mouseX > m_x + 36)
         {
             return false;
         }
-        if (command.mouseY < m_y || command.mouseY > m_y + 36)
+        if (cmd.mouseY < m_y || cmd.mouseY > m_y + 36)
         {
             return false;
         }

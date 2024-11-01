@@ -45,29 +45,29 @@ namespace Minesweeper
         CreateGroups();
     }
 
-    bool Board::OnInput(UserCommand &command)
+    bool Board::OnInput(UserCommand &cmd)
     {
-        if (command.type != UserCommandType::MouseButtonDown)
+        if (cmd.type != UserCommandType::MouseButtonDown)
         {
             return false;
         }
-        if (command.mouseX < m_x || command.mouseX > m_x + m_boardWidth * 30)
+        if (cmd.mouseX < m_x || cmd.mouseX > m_x + m_boardWidth * 30)
         {
             return false;
         }
-        if (command.mouseY < m_y || command.mouseY > m_y + m_boardHeight * 30)
+        if (cmd.mouseY < m_y || cmd.mouseY > m_y + m_boardHeight * 30)
         {
             return false;
         }
 
-        int x{command.mouseX - m_x};
-        int y{command.mouseY - m_y};
+        int x{cmd.mouseX - m_x};
+        int y{cmd.mouseY - m_y};
 
-        if (command.mouseButton == MouseButton::Left)
+        if (cmd.mouseButton == MouseButton::Left)
         {
             return OnLeftClick(x, y);
         }
-        if (command.mouseButton == MouseButton::Right)
+        if (cmd.mouseButton == MouseButton::Right)
         {
             return OnRightClick(x, y);
         }

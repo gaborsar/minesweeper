@@ -25,7 +25,7 @@ namespace Minesweeper
         Board(int x, int y, int boardWidth, int boardHeight, int numberOfMines);
         void Init();
 
-        bool OnInput(UserCommand &command);
+        bool OnInput(UserCommand &cmd);
         void OnRender();
 
         int GetNumberOfFlags();

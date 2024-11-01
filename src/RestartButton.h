@@ -8,7 +8,7 @@ namespace Minesweeper
     {
     public:
         RestartButton(int x, int y);
-        bool OnInput(UserCommand &command);
+        bool OnInput(UserCommand &cmd);
         void OnRender();
 
     private:

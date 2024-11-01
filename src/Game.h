@@ -26,7 +26,7 @@ namespace Minesweeper
         Game(int boardWidth, int boardHeight, int numberOfMines, int time);
         static Game &Get();
 
-        bool OnInput(UserCommand &command);
+        bool OnInput(UserCommand &cmd);
         bool OnUpdate(int time);
         void OnRender();
 
@@ -50,8 +50,6 @@ namespace Minesweeper
         std::unique_ptr<Board> m_board;
 
     private:
-        bool OnLeftClick(int px, int py);
-        bool OnRightClick(int px, int py);
         void RenderBackground();
         void RenderCounter();
         void RenderTimer();

@@ -43,13 +43,13 @@ namespace Minesweeper
         m_status = GameStatus::Lost;
     }
 
-    bool Game::OnInput(UserCommand &command)
+    bool Game::OnInput(UserCommand &cmd)
     {
-        if (m_restartButton->OnInput(command))
+        if (m_restartButton->OnInput(cmd))
         {
             return true;
         }
-        if (m_status == GameStatus::Playing && m_board->OnInput(command))
+        if (m_status == GameStatus::Playing && m_board->OnInput(cmd))
         {
             return true;
         }
@@ -144,8 +144,6 @@ namespace Minesweeper
 
     void Game::RenderCounter()
     {
-        int x1{30};
-        int y{30};
         int count{m_numberOfMines - m_board->GetNumberOfFlags()};
         if (count < 0)
         {
@@ -156,9 +154,7 @@ namespace Minesweeper
 
     void Game::RenderTimer()
     {
-        int x{20 + m_boardWidth * 30 - 64 - 10};
-        int y{30};
-        RenderNumber(x, y, m_elapsedTime);
+        RenderNumber(20 + m_boardWidth * 30 - 64 - 10, 30, m_elapsedTime);
     }
 
     void Game::RenderNumber(int px, int py, int n)
