@@ -1,22 +1,22 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Sprites.h"
+#include "Window.h"
 #include <cassert>
 
 namespace Minesweeper
 {
     static Game *m_instance{nullptr};
 
-    Game::Game(int boardWidth, int boardHeight, int numberOfMines, int time)
-        : m_boardWidth{boardWidth}, m_boardHeight{boardHeight}, m_numberOfMines{numberOfMines}, m_startTime{time}, m_updateTime{time}
+    Game::Game(const GameConfig &config, int time) : m_config{config}, m_startTime{time}, m_updateTime{time}
     {
-        int btnX{20 + boardWidth * 30 / 2 - 18};
+        int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
         int btnY{20 + 12};
         m_restartButton = std::make_unique<RestartButton>(btnX, btnY);
 
         int boardX{20};
         int boardY{20 + 60 + 20};
-        m_board = std::make_unique<Board>(boardX, boardY, boardWidth, boardHeight, numberOfMines);
+        m_board = std::make_unique<Board>(boardX, boardY, m_config.boardWidth, m_config.boardHeight, m_config.numberOfMines);
 
         m_instance = this;
     }
@@ -30,7 +30,37 @@ namespace Minesweeper
     {
         m_status = GameStatus::Playing;
         m_startTime = m_updateTime;
-        m_board->Init();
+        if (m_board->HasChanged())
+        {
+            m_board->Init();
+        }
+        else
+        {
+            if (m_config.boardWidth == BeginnerConfig.boardWidth)
+            {
+                m_config = IntermediateConfig;
+            }
+            else if (m_config.boardWidth == IntermediateConfig.boardWidth)
+            {
+                m_config = ExpertConfig;
+            }
+            else
+            {
+                m_config = BeginnerConfig;
+            }
+
+            Window &window{Window::Get()};
+            Size windowSize{Minesweeper::GetWindowSize(m_config)};
+            window.ScheduleResize(windowSize.w, windowSize.h);
+
+            int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
+            int btnY{20 + 12};
+            m_restartButton->Move(btnX, btnY);
+
+            int boardX{20};
+            int boardY{20 + 60 + 20};
+            m_board = std::make_unique<Board>(boardX, boardY, m_config.boardWidth, m_config.boardHeight, m_config.numberOfMines);
+        }
     }
 
     void Game::Win()
@@ -92,11 +122,11 @@ namespace Minesweeper
     void Game::RenderBackground()
     {
         int x1{0};
-        int x2{20 + m_boardWidth * 30};
+        int x2{20 + m_config.boardWidth * 30};
 
         int y1{0};
         int y2{20 + 60};
-        int y3{y2 + 20 + m_boardHeight * 30};
+        int y3{y2 + 20 + m_config.boardHeight * 30};
 
         Renderer &renderer{Renderer::Get()};
 
@@ -109,7 +139,7 @@ namespace Minesweeper
         renderer.RenderSprite(x1, y2, Sprites::FrameLeftJoint);
         renderer.RenderSprite(x2, y2, Sprites::FrameRightJoint);
 
-        for (int i{0}; i < m_boardWidth * 3; ++i)
+        for (int i{0}; i < m_config.boardWidth * 3; ++i)
         {
             int x{20 + i * 10};
             renderer.RenderSprite(x, y1, Sprites::FrameHorizontal);
@@ -124,7 +154,7 @@ namespace Minesweeper
             renderer.RenderSprite(x2, y, Sprites::FrameVertical);
         }
 
-        for (int i{0}; i < m_boardHeight * 3; ++i)
+        for (int i{0}; i < m_config.boardHeight * 3; ++i)
         {
             int y{y2 + 20 + i * 10};
             renderer.RenderSprite(x1, y, Sprites::FrameVertical);
@@ -133,7 +163,7 @@ namespace Minesweeper
 
         for (int i{0}; i < 6; ++i)
         {
-            for (int j{0}; j < m_boardWidth * 3; ++j)
+            for (int j{0}; j < m_config.boardWidth * 3; ++j)
             {
                 int x{20 + j * 10};
                 int y{20 + i * 10};
@@ -144,7 +174,7 @@ namespace Minesweeper
 
     void Game::RenderCounter()
     {
-        int count{m_numberOfMines - m_board->GetNumberOfFlags()};
+        int count{m_config.numberOfMines - m_board->GetNumberOfFlags()};
         if (count < 0)
         {
             count = 0;
@@ -154,7 +184,7 @@ namespace Minesweeper
 
     void Game::RenderTimer()
     {
-        RenderNumber(20 + m_boardWidth * 30 - 64 - 10, 30, m_elapsedTime);
+        RenderNumber(20 + m_config.boardWidth * 30 - 64 - 10, 30, m_elapsedTime);
     }
 
     void Game::RenderNumber(int px, int py, int n)
@@ -188,7 +218,7 @@ namespace Minesweeper
 
     void Game::RenderRestartButton()
     {
-        int x{20 + m_boardWidth * 30 / 2 - 18};
+        int x{20 + m_config.boardWidth * 30 / 2 - 18};
         int y{20 + 12};
         Renderer &renderer{Renderer::Get()};
         renderer.RenderSprite(x, y, Sprites::RestartButtonHappy);

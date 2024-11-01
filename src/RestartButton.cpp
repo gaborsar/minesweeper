@@ -36,4 +36,10 @@ namespace Minesweeper
         Renderer &renderer{Renderer::Get()};
         renderer.RenderSprite(m_x, m_y, isSad ? Sprites::RestartButtonSad : Sprites::RestartButtonHappy);
     }
+
+    void RestartButton::Move(int x, int y)
+    {
+        m_x = x;
+        m_y = y;
+    }
 }

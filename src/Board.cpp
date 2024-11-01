@@ -17,8 +17,9 @@ namespace Minesweeper
 
     void Board::Init()
     {
-        int l{m_boardWidth * m_boardHeight};
+        m_hasChanged = false;
 
+        int l{m_boardWidth * m_boardHeight};
         m_blocks = std::vector<std::shared_ptr<Block>>(l);
         for (int i{0}; i < l; ++i)
         {
@@ -275,6 +276,7 @@ namespace Minesweeper
         {
             return false;
         }
+        m_hasChanged = true;
         block->IsOpen = true;
         if (block->IsMine)
         {

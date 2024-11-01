@@ -8,9 +8,20 @@
 
 namespace Minesweeper
 {
-    inline constexpr Size GetWindowSize(int boardWidth, int boardHeight)
+    struct GameConfig
     {
-        return {20 * 2 + 30 * boardWidth, 20 * 3 + 60 + 30 * boardHeight};
+        int boardWidth{0};
+        int boardHeight{0};
+        int numberOfMines{0};
+    };
+
+    constexpr GameConfig BeginnerConfig{9, 9, 10};
+    constexpr GameConfig IntermediateConfig{16, 16, 40};
+    constexpr GameConfig ExpertConfig{30, 16, 99};
+
+    inline constexpr Size GetWindowSize(const GameConfig &config)
+    {
+        return {20 * 2 + 30 * config.boardWidth, 20 * 3 + 60 + 30 * config.boardHeight};
     }
 
     enum class GameStatus
@@ -23,7 +34,7 @@ namespace Minesweeper
     class Game
     {
     public:
-        Game(int boardWidth, int boardHeight, int numberOfMines, int time);
+        Game(const GameConfig &config, int time);
         static Game &Get();
 
         bool OnInput(UserCommand &cmd);
@@ -37,10 +48,7 @@ namespace Minesweeper
 
     private:
         GameStatus m_status{GameStatus::Playing};
-
-        int m_boardWidth{0};
-        int m_boardHeight{0};
-        int m_numberOfMines{0};
+        GameConfig m_config{BeginnerConfig};
 
         int m_startTime{0};
         int m_updateTime{0};

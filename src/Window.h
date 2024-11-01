@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core.h"
 #include <SDL2/SDL.h>
 
 namespace Minesweeper
@@ -8,10 +9,15 @@ namespace Minesweeper
     {
     public:
         Window(SDL_Window *window);
-        void Resize(int w, int h);
         static Window &Get();
+        void ScheduleResize(int w, int h);
+        void ApplyUpdates();
+        Size GetSize() { return {m_w, m_h}; }
 
     private:
         SDL_Window *m_window;
+        bool m_shouldUpdate{false};
+        int m_w{0};
+        int m_h{0};
     };
 }

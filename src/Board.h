@@ -28,6 +28,7 @@ namespace Minesweeper
         bool OnInput(UserCommand &cmd);
         void OnRender();
 
+        bool HasChanged() { return m_hasChanged; }
         int GetNumberOfFlags();
 
     private:
@@ -40,6 +41,7 @@ namespace Minesweeper
         int m_boardHeight{0};
         int m_numberOfMines{0};
 
+        bool m_hasChanged{false};
         std::vector<std::shared_ptr<Block>> m_blocks;
 
         void PlaceMine(int x, int y);

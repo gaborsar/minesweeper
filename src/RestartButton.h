@@ -10,6 +10,7 @@ namespace Minesweeper
         RestartButton(int x, int y);
         bool OnInput(UserCommand &cmd);
         void OnRender();
+        void Move(int x, int y);
 
     private:
         int m_x{0};
