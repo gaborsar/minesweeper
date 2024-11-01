@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "Input.h"
 #include "Renderer.h"
+#include "Window.h"
 #include <iostream>
 #include <memory>
 #include <SDL2/SDL.h>
@@ -56,6 +57,7 @@ int main()
 
     int startTime{static_cast<int>(SDL_GetTicks())};
 
+    auto window{std::make_shared<Minesweeper::Window>(sdlWindow)};
     auto renderer{std::make_shared<Minesweeper::Renderer>(sdlRenderer, sdlTexture)};
     auto game{std::make_unique<Minesweeper::Game>(boardWidth, boardHeight, numberOfMines, startTime)};
 

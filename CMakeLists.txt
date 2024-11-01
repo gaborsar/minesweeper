@@ -15,7 +15,9 @@ add_executable(minesweeper
     src/Renderer.h
     src/RestartButton.cpp
     src/RestartButton.h
-    src/Sprite.h
+    src/Sprites.h
+    src/Window.h
+    src/Window.cpp
 )
 
 target_link_libraries(minesweeper ${SDL2_LIBRARIES})
