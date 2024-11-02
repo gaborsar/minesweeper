@@ -8,6 +8,8 @@ Window::Window(SDL_Window *window, int w, int h)
   m_instance = this;
 }
 
+Window &Window::Get() { return *m_instance; }
+
 void Window::Resize(int w, int h) {
   m_w = w;
   m_h = h;
@@ -15,6 +17,4 @@ void Window::Resize(int w, int h) {
   SDL_SetWindowPosition(m_window, SDL_WINDOWPOS_CENTERED,
                         SDL_WINDOWPOS_CENTERED);
 }
-
-Window &Window::Get() { return *m_instance; }
 } // namespace Minesweeper

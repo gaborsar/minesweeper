@@ -1,6 +1,7 @@
 #include "Board.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "Sound.h"
 #include "Sprites.h"
 #include <algorithm>
 #include <cassert>
@@ -229,6 +230,7 @@ bool Board::OnLeftClick(int px, int py) {
     block->IsExploded = true;
     Game &game{Game::Get()};
     game.Lose();
+    Sounds::LosingSound.Play();
   } else {
     if (block->NearMineCount == 0) {
       int g{block->Groups.first};
@@ -244,6 +246,9 @@ bool Board::OnLeftClick(int px, int py) {
         })) {
       Game &game{Game::Get()};
       game.Win();
+      Sounds::WinningSound.Play();
+    } else {
+      Sounds::ClickingSound.Play();
     }
   }
   return true;

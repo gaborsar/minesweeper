@@ -1,15 +1,22 @@
+#include "Audio.h"
 #include "Core.h"
 #include "Game.h"
 #include "Input.h"
 #include "Renderer.h"
+#include "Sound.h"
 #include "Window.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <iostream>
 #include <memory>
 
 int main() {
   Minesweeper::GameConfig config{Minesweeper::BeginnerConfig};
   Minesweeper::Size windowSize{Minesweeper::GetWindowSize(config)};
+
+  auto audio{std::make_unique<Minesweeper::Audio>()};
+  Minesweeper::Sounds::ClickingSound.Load();
+  Minesweeper::Sounds::WinningSound.Load();
+  Minesweeper::Sounds::LosingSound.Load();
 
   // INIT SDL
 
@@ -53,7 +60,8 @@ int main() {
   int startTime{static_cast<int>(SDL_GetTicks())};
 
   std::unique_ptr<Minesweeper::Window> window{
-      std::make_unique<Minesweeper::Window>(sdlWindow, windowSize.w, windowSize.h)};
+      std::make_unique<Minesweeper::Window>(sdlWindow, windowSize.w,
+                                            windowSize.h)};
   std::unique_ptr<Minesweeper::Renderer> renderer{
       std::make_unique<Minesweeper::Renderer>(sdlRenderer, sdlTexture)};
   std::unique_ptr<Minesweeper::Game> game{
