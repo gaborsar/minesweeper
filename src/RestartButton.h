@@ -5,7 +5,6 @@
 namespace Minesweeper {
 class RestartButton {
 public:
-  RestartButton(int x, int y);
   bool OnInput(Engine::UserCommand &cmd);
   void OnRender();
   void Move(int x, int y);

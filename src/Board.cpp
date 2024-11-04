@@ -2,35 +2,50 @@
 #include "Game.h"
 #include "SoundManager.h"
 #include "SpriteRenderer.h"
-#include <algorithm>
 #include <cassert>
 #include <random>
 
+#define MAX_SIZE 30 * 16
+
 namespace Minesweeper {
-Board::Board(int x, int y, int boardWidth, int boardHeight, int numberOfMines)
-    : m_x{x}, m_y{y}, m_boardWidth{boardWidth}, m_boardHeight{boardHeight},
-      m_numberOfMines{numberOfMines} {
+Board::Board() {
   m_mt = static_cast<std::mt19937>(std::random_device{}());
-  Init();
+  m_blocks = new Block[MAX_SIZE]{};
 }
 
-void Board::Init() {
+Board::~Board() { delete[] m_blocks; }
+
+void Board::Move(int x, int y) {
+  m_x = x;
+  m_y = y;
+}
+
+void Board::Init(int boardWidth, int boardHeight, int numberOfMines) {
+  assert(boardHeight * boardWidth <= MAX_SIZE);
+
+  m_boardWidth = boardWidth;
+  m_boardHeight = boardHeight;
   m_hasChanged = false;
 
-  int l{m_boardWidth * m_boardHeight};
-  m_blocks = std::vector<std::shared_ptr<Block>>(l);
-  for (int i{0}; i < l; ++i) {
-    m_blocks[i] = std::make_shared<Block>();
+  for (int i{0}; i < MAX_SIZE; ++i) {
+    Block *block{&m_blocks[i]};
+    block->IsOpen = false;
+    block->IsFlagged = false;
+    block->IsMine = false;
+    block->IsExploded = false;
+    block->NearMineCount = 0;
+    block->Groups.first = 0;
+    block->Groups.second = 0;
   }
 
   std::uniform_int_distribution<int> randX{0, m_boardWidth - 1};
   std::uniform_int_distribution<int> randY{0, m_boardHeight - 1};
 
-  for (int i{0}; i < m_numberOfMines; ++i) {
+  for (int i{0}; i < numberOfMines; ++i) {
     int x{randX(m_mt)};
     int y{randY(m_mt)};
     int j{PosToIndex(x, y)};
-    while (m_blocks[j]->IsMine) {
+    while ((&m_blocks[j])->IsMine) {
       x = randX(m_mt);
       y = randY(m_mt);
       j = PosToIndex(x, y);
@@ -71,21 +86,21 @@ void Board::OnRender() {
       int i{PosToIndex(x, y)};
       int px{m_x + x * 30};
       int py{m_y + y * 30};
-      auto &block{m_blocks[i]};
-      if (block->IsOpen) {
-        if (block->IsExploded) {
+      Block block{m_blocks[i]};
+      if (block.IsOpen) {
+        if (block.IsExploded) {
           SpriteRenderer::RenderSprite(px, py, Sprites::BlockMineExploded);
           continue;
         }
-        if (block->IsMine) {
+        if (block.IsMine) {
           SpriteRenderer::RenderSprite(px, py, Sprites::BlockMine);
           continue;
         }
-        SpriteRenderer::RenderSprite(
-            px, py, Sprites::BlockDigits[block->NearMineCount]);
+        SpriteRenderer::RenderSprite(px, py,
+                                     Sprites::BlockDigits[block.NearMineCount]);
         continue;
       }
-      if (block->IsFlagged) {
+      if (block.IsFlagged) {
         SpriteRenderer::RenderSprite(px, py, Sprites::BlockFlagged);
         continue;
       }
@@ -95,13 +110,18 @@ void Board::OnRender() {
 }
 
 int Board::GetNumberOfFlags() {
-  return std::count_if(m_blocks.begin(), m_blocks.end(),
-                       [](const auto &block) { return block->IsFlagged; });
+  int count{0};
+  for (int i{0}; i < m_boardHeight * m_boardWidth; ++i) {
+    if (m_blocks[i].IsFlagged) {
+      count++;
+    }
+  }
+  return count;
 }
 
 void Board::PlaceMine(int x, int y) {
   int i1{PosToIndex(x, y)};
-  m_blocks[i1]->IsMine = true;
+  m_blocks[i1].IsMine = true;
   for (int y2{y - 1}; y2 <= y + 1; ++y2) {
     if (y2 < 0 || y2 > m_boardHeight - 1) {
       continue;
@@ -111,22 +131,22 @@ void Board::PlaceMine(int x, int y) {
         continue;
       }
       int i2{PosToIndex(x2, y2)};
-      ++m_blocks[i2]->NearMineCount;
+      ++m_blocks[i2].NearMineCount;
     }
   }
 }
 
 void Board::CreateGroups() {
   for (int i{0}; i < m_boardWidth * m_boardHeight; ++i) {
-    if (!m_blocks[i]->IsMine && m_blocks[i]->NearMineCount == 0) {
-      m_blocks[i]->Groups.first = i + 1;
+    if (!m_blocks[i].IsMine && m_blocks[i].NearMineCount == 0) {
+      m_blocks[i].Groups.first = i + 1;
     }
   }
 
   for (int y1{0}; y1 < m_boardHeight; ++y1) {
     for (int x1{0}; x1 < m_boardWidth; ++x1) {
       int i1{PosToIndex(x1, y1)};
-      auto &block1{m_blocks[i1]};
+      Block *block1{&m_blocks[i1]};
       if (block1->IsMine || block1->NearMineCount != 0) {
         continue;
       }
@@ -140,7 +160,7 @@ void Board::CreateGroups() {
             continue;
           }
           int i2{PosToIndex(x2, y2)};
-          auto &block2{m_blocks[i2]};
+          Block *block2{&m_blocks[i2]};
           if (block2->IsMine || block2->NearMineCount != 0) {
             continue;
           }
@@ -161,7 +181,7 @@ void Board::CreateGroups() {
   for (int y1{0}; y1 < m_boardHeight; ++y1) {
     for (int x1{0}; x1 < m_boardWidth; ++x1) {
       int i1{PosToIndex(x1, y1)};
-      auto &block1{m_blocks[i1]};
+      Block *block1{&m_blocks[i1]};
       if (block1->IsMine || block1->NearMineCount != 0) {
         continue;
       }
@@ -175,7 +195,7 @@ void Board::CreateGroups() {
             continue;
           }
           int i2{PosToIndex(x2, y2)};
-          auto &block2{m_blocks[i2]};
+          Block *block2{&m_blocks[i2]};
           if (block2->IsMine || block2->NearMineCount == 0) {
             continue;
           }
@@ -196,7 +216,7 @@ void Board::CreateGroups() {
 
 inline void Board::MergeGroups(int g1, int g2) {
   for (int i{0}; i < m_boardWidth * m_boardHeight; ++i) {
-    auto &block{m_blocks[i]};
+    Block *block{&m_blocks[i]};
     if (block->Groups.first != g2) {
       continue;
     }
@@ -214,14 +234,15 @@ bool Board::OnLeftClick(int px, int py) {
     return false;
   }
   int i{PosToIndex(x, y)};
-  auto &block{m_blocks[i]};
+  Block *block{&m_blocks[i]};
   if (block->IsOpen || block->IsFlagged) {
     return false;
   }
   m_hasChanged = true;
   block->IsOpen = true;
   if (block->IsMine) {
-    for (auto &block : m_blocks) {
+    for (int i{0}; i < m_boardHeight * m_boardWidth; ++i) {
+      Block *block{&m_blocks[i]};
       block->IsOpen = true;
       block->IsFlagged = false;
     }
@@ -231,16 +252,23 @@ bool Board::OnLeftClick(int px, int py) {
   } else {
     if (block->NearMineCount == 0) {
       int g{block->Groups.first};
-      for (auto &block : m_blocks) {
+      for (int i{0}; i < m_boardHeight * m_boardWidth; ++i) {
+        Block *block{&m_blocks[i]};
         if (!block->IsFlagged &&
             (block->Groups.first == g || block->Groups.second == g)) {
           block->IsOpen = true;
         }
       }
     }
-    if (std::all_of(m_blocks.begin(), m_blocks.end(), [](const auto &block) {
-          return block->IsMine ? !block->IsOpen : block->IsOpen;
-        })) {
+    bool hasWon = true;
+    for (int i{0}; i < m_boardHeight * m_boardWidth; ++i) {
+      Block *block{&m_blocks[i]};
+      if (block->IsMine ? block->IsOpen : !block->IsOpen) {
+        hasWon = false;
+        break;
+      }
+    }
+    if (hasWon) {
       SoundManager::PlayWinningSound();
       Game::Win();
     } else {
@@ -260,7 +288,7 @@ bool Board::OnRightClick(int px, int py) {
     return false;
   }
   int i{PosToIndex(x, y)};
-  auto &block{m_blocks[i]};
+  Block *block{&m_blocks[i]};
   if (block->IsOpen) {
     return false;
   }

@@ -1,10 +1,9 @@
 #pragma once
 
 #include "Engine.h"
-#include <memory>
+#include <array>
 #include <random>
 #include <utility>
-#include <vector>
 
 namespace Minesweeper {
 struct Block {
@@ -18,8 +17,10 @@ struct Block {
 
 class Board {
 public:
-  Board(int x, int y, int boardWidth, int boardHeight, int numberOfMines);
-  void Init();
+  Board();
+  ~Board();
+  void Move(int x, int y);
+  void Init(int boardWidth, int boardHeight, int numberOfMines);
 
   bool OnInput(Engine::UserCommand &cmd);
   void OnRender();
@@ -35,10 +36,9 @@ private:
 
   int m_boardWidth{0};
   int m_boardHeight{0};
-  int m_numberOfMines{0};
 
   bool m_hasChanged{false};
-  std::vector<std::shared_ptr<Block>> m_blocks;
+  Block *m_blocks;
 
   void PlaceMine(int x, int y);
   void CreateGroups();
