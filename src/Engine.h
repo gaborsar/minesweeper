@@ -18,25 +18,6 @@ struct Rect {
 
 enum class ImageType { BMP };
 
-enum class UserCommandType {
-  None,
-  MouseButtonDown,
-  MouseButtonUp,
-};
-
-enum class MouseButton {
-  None,
-  Left,
-  Right,
-};
-
-struct UserCommand {
-  UserCommandType type{UserCommandType::None};
-  MouseButton mouseButton{MouseButton::None};
-  int mouseX{0};
-  int mouseY{0};
-};
-
 inline constexpr bool IsPointWithinRect(const Rect &rect, int px, int py) {
   return px >= rect.x && px < rect.x + rect.w && py >= rect.y &&
          py < rect.y + rect.w;

@@ -3,17 +3,17 @@
 #include "SpriteRenderer.h"
 
 namespace Minesweeper {
-bool RestartButton::OnInput(Engine::UserCommand &cmd) {
-  if (cmd.type != Engine::UserCommandType::MouseButtonDown) {
+bool RestartButton::OnInput(const SDL_Event &event) {
+  if (event.type != SDL_MOUSEBUTTONDOWN) {
     return false;
   }
-  if (cmd.mouseButton != Engine::MouseButton::Left) {
+  if (event.button.button != SDL_BUTTON_LEFT) {
     return false;
   }
-  if (cmd.mouseX < m_x || cmd.mouseX > m_x + 36) {
+  if (event.button.x < m_x || event.button.x > m_x + 36) {
     return false;
   }
-  if (cmd.mouseY < m_y || cmd.mouseY > m_y + 36) {
+  if (event.button.y < m_y || event.button.y > m_y + 36) {
     return false;
   }
   Game::Restart();

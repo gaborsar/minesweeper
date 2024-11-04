@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Engine.h"
+#include <SDL.h>
 
 namespace Minesweeper {
 class RestartButton {
 public:
-  bool OnInput(Engine::UserCommand &cmd);
+  bool OnInput(const SDL_Event &event);
   void OnRender();
   void Move(int x, int y);
 

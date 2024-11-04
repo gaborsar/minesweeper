@@ -6,7 +6,7 @@ static Window *s_window{nullptr};
 static Renderer *s_renderer{nullptr};
 
 SDLSubsystem::SDLSubsystem() {
-  int result = SDL_Init(SDL_INIT_EVERYTHING);
+  int result{SDL_Init(SDL_INIT_EVERYTHING)};
   if (result < 0) {
     std::stringstream msg{};
     msg << "failed to init SDL: " << SDL_GetError();
@@ -63,8 +63,8 @@ void Renderer::RenderSprite(Texture &texture, int x, int y,
                             const Rect &sprite) {
   SDL_Rect srcRect{sprite.x, sprite.y, sprite.w, sprite.h};
   SDL_Rect dstRect{x, y, sprite.w, sprite.h};
-  int result = SDL_RenderCopy(s_renderer->m_renderer, texture.m_texture,
-                              &srcRect, &dstRect);
+  int result{SDL_RenderCopy(s_renderer->m_renderer, texture.m_texture, &srcRect,
+                            &dstRect)};
   if (result < 0) {
     std::stringstream msg{};
     msg << "failed to render sprite: " << SDL_GetError();
@@ -104,7 +104,7 @@ Texture::Texture(const char *file, ImageType type) {
 Texture::~Texture() { SDL_DestroyTexture(m_texture); }
 
 Mixer::Mixer() {
-  int result = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
+  int result{Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024)};
   if (result < 0) {
     std::stringstream msg{};
     msg << "failed to open SDL audio" << Mix_GetError();

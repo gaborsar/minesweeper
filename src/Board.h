@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Engine.h"
-#include <array>
+#include <SDL.h>
 #include <random>
 #include <utility>
 
@@ -22,7 +21,7 @@ public:
   void Move(int x, int y);
   void Init(int boardWidth, int boardHeight, int numberOfMines);
 
-  bool OnInput(Engine::UserCommand &cmd);
+  bool OnInput(const SDL_Event &event);
   void OnRender();
 
   bool HasChanged() { return m_hasChanged; }

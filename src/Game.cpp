@@ -17,11 +17,11 @@ Game::Game(const GameConfig &config)
   s_instance = this;
 }
 
-bool Game::OnInput(Engine::UserCommand &cmd) {
-  if (m_restartButton.OnInput(cmd)) {
+bool Game::OnInput(const SDL_Event &event) {
+  if (m_restartButton.OnInput(event)) {
     return true;
   }
-  if (m_status == GameStatus::Playing && m_board.OnInput(cmd)) {
+  if (m_status == GameStatus::Playing && m_board.OnInput(event)) {
     return true;
   }
   return false;

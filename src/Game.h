@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Board.h"
-#include "Engine.h"
 #include "GameConfig.h"
 #include "RestartButton.h"
+#include <SDL.h>
 
 namespace Minesweeper {
 enum class GameStatus { Playing, Won, Lost };
@@ -12,7 +12,7 @@ class Game {
 public:
   Game(const GameConfig &config);
 
-  bool OnInput(Engine::UserCommand &cmd);
+  bool OnInput(const SDL_Event &event);
   bool OnUpdate(int time);
   void OnRender();
 

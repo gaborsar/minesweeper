@@ -56,24 +56,24 @@ void Board::Init(int boardWidth, int boardHeight, int numberOfMines) {
   CreateGroups();
 }
 
-bool Board::OnInput(Engine::UserCommand &cmd) {
-  if (cmd.type != Engine::UserCommandType::MouseButtonDown) {
+bool Board::OnInput(const SDL_Event &event) {
+  if (event.type != SDL_MOUSEBUTTONDOWN) {
     return false;
   }
-  if (cmd.mouseX < m_x || cmd.mouseX > m_x + m_boardWidth * 30) {
+  if (event.button.x < m_x || event.button.x > m_x + m_boardWidth * 30) {
     return false;
   }
-  if (cmd.mouseY < m_y || cmd.mouseY > m_y + m_boardHeight * 30) {
+  if (event.button.y < m_y || event.button.y > m_y + m_boardHeight * 30) {
     return false;
   }
 
-  int x{cmd.mouseX - m_x};
-  int y{cmd.mouseY - m_y};
+  int x{event.button.x - m_x};
+  int y{event.button.y - m_y};
 
-  if (cmd.mouseButton == Engine::MouseButton::Left) {
+  if (event.button.button == SDL_BUTTON_LEFT) {
     return OnLeftClick(x, y);
   }
-  if (cmd.mouseButton == Engine::MouseButton::Right) {
+  if (event.button.button == SDL_BUTTON_RIGHT) {
     return OnRightClick(x, y);
   }
 
@@ -260,7 +260,7 @@ bool Board::OnLeftClick(int px, int py) {
         }
       }
     }
-    bool hasWon = true;
+    bool hasWon{true};
     for (int i{0}; i < m_boardHeight * m_boardWidth; ++i) {
       Block *block{&m_blocks[i]};
       if (block->IsMine ? block->IsOpen : !block->IsOpen) {
