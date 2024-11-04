@@ -104,7 +104,7 @@ Texture::Texture(const char *file, ImageType type) {
 Texture::~Texture() { SDL_DestroyTexture(m_texture); }
 
 Mixer::Mixer() {
-  int result = Mix_OpenAudio(4410, MIX_DEFAULT_FORMAT, 2, 1024);
+  int result = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024);
   if (result < 0) {
     std::stringstream msg{};
     msg << "failed to open SDL audio" << Mix_GetError();
@@ -126,5 +126,5 @@ Sound::Sound(const char *file) {
 
 Sound::~Sound() { Mix_FreeChunk(m_chunk); }
 
-void Sound::Play() { Mix_PlayChannel(1, m_chunk, 0); }
+void Sound::Play() { Mix_PlayChannel(-1, m_chunk, 0); }
 } // namespace Engine
