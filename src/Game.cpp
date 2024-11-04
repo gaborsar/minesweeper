@@ -4,59 +4,22 @@
 #include <cassert>
 
 namespace Minesweeper {
-static Game *m_instance{nullptr};
+static Game *s_game{nullptr};
 
 Game::Game(const GameConfig &config, int time)
-    : m_config{config}, m_startTime{time}, m_updateTime{time} {
-  int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
-  int btnY{20 + 12};
-  m_restartButton = std::make_unique<RestartButton>(btnX, btnY);
-
-  int boardX{20};
-  int boardY{20 + 60 + 20};
-  m_board =
-      std::make_unique<Board>(boardX, boardY, m_config.boardWidth,
-                              m_config.boardHeight, m_config.numberOfMines);
-
-  m_instance = this;
-}
-
-Game &Game::Get() { return *m_instance; }
-
-void Game::Restart() {
-  m_status = GameStatus::Playing;
-  m_startTime = m_updateTime;
-  if (m_board->HasChanged()) {
-    m_board->Init();
-  } else {
-    if (m_config.boardWidth == BeginnerConfig.boardWidth) {
-      m_config = IntermediateConfig;
-    } else if (m_config.boardWidth == IntermediateConfig.boardWidth) {
-      m_config = ExpertConfig;
-    } else {
-      m_config = BeginnerConfig;
-    }
-
-    Engine::Size windowSize{Minesweeper::GetWindowSize(m_config)};
-    Application::ResizeWindow(windowSize.w, windowSize.h);
-
-    int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
-    int btnY{20 + 12};
-    m_restartButton->Move(btnX, btnY);
-
-    int boardX{20};
-    int boardY{20 + 60 + 20};
-    m_board =
-        std::make_unique<Board>(boardX, boardY, m_config.boardWidth,
-                                m_config.boardHeight, m_config.numberOfMines);
-  }
+    : m_config{config}, m_startTime{time}, m_updateTime{time},
+      m_restartButton{
+          RestartButton{20 + m_config.boardWidth * 30 / 2 - 18, 20 + 12}},
+      m_board{Board{20, 20 + 60 + 20, config.boardWidth, config.boardHeight,
+                    config.numberOfMines}} {
+  s_game = this;
 }
 
 bool Game::OnInput(Engine::UserCommand &cmd) {
-  if (m_restartButton->OnInput(cmd)) {
+  if (m_restartButton.OnInput(cmd)) {
     return true;
   }
-  if (m_status == GameStatus::Playing && m_board->OnInput(cmd)) {
+  if (m_status == GameStatus::Playing && m_board.OnInput(cmd)) {
     return true;
   }
   return false;
@@ -85,9 +48,48 @@ void Game::OnRender() {
   RenderBackground();
   RenderCounter();
   RenderTimer();
-  m_restartButton->OnRender();
-  m_board->OnRender();
+  m_restartButton.OnRender();
+  m_board.OnRender();
 }
+
+bool Game::IsPlaying() { return s_game->m_status == GameStatus::Playing; }
+
+bool Game::HasWon() { return s_game->m_status == GameStatus::Won; }
+
+bool Game::HasLost() { return s_game->m_status == GameStatus::Lost; }
+
+void Game::Restart() {
+  s_game->m_status = GameStatus::Playing;
+  s_game->m_startTime = s_game->m_updateTime;
+  if (s_game->m_board.HasChanged()) {
+    s_game->m_board.Init();
+  } else {
+    if (s_game->m_config.boardWidth == BeginnerConfig.boardWidth) {
+      s_game->m_config = IntermediateConfig;
+    } else if (s_game->m_config.boardWidth == IntermediateConfig.boardWidth) {
+      s_game->m_config = ExpertConfig;
+    } else {
+      s_game->m_config = BeginnerConfig;
+    }
+
+    Engine::Size windowSize{Minesweeper::GetWindowSize(s_game->m_config)};
+    Application::ResizeWindow(windowSize.w, windowSize.h);
+
+    int btnX{20 + s_game->m_config.boardWidth * 30 / 2 - 18};
+    int btnY{20 + 12};
+    s_game->m_restartButton.Move(btnX, btnY);
+
+    int boardX{20};
+    int boardY{20 + 60 + 20};
+    s_game->m_board =
+        Board{boardX, boardY, s_game->m_config.boardWidth,
+              s_game->m_config.boardHeight, s_game->m_config.numberOfMines};
+  }
+}
+
+void Game::Win() { s_game->m_status = GameStatus::Won; }
+
+void Game::Lose() { s_game->m_status = GameStatus::Lost; }
 
 void Game::RenderBackground() {
   int x1{0};
@@ -135,7 +137,7 @@ void Game::RenderBackground() {
 }
 
 void Game::RenderCounter() {
-  int count{m_config.numberOfMines - m_board->GetNumberOfFlags()};
+  int count{m_config.numberOfMines - m_board.GetNumberOfFlags()};
   if (count < 0) {
     count = 0;
   }

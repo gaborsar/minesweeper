@@ -3,7 +3,6 @@
 #include "Board.h"
 #include "Engine.h"
 #include "RestartButton.h"
-#include <memory>
 
 namespace Minesweeper {
 struct GameConfig {
@@ -11,6 +10,8 @@ struct GameConfig {
   int boardHeight{0};
   int numberOfMines{0};
 };
+
+enum class GameStatus { Playing, Won, Lost };
 
 constexpr GameConfig BeginnerConfig{9, 9, 10};
 constexpr GameConfig IntermediateConfig{16, 16, 40};
@@ -21,32 +22,31 @@ inline constexpr Engine::Size GetWindowSize(const GameConfig &config) {
           20 * 3 + 60 + 30 * config.boardHeight};
 }
 
-enum class GameStatus { Playing, Won, Lost };
-
 class Game {
 public:
   Game(const GameConfig &config, int time);
-  static Game &Get();
 
   bool OnInput(Engine::UserCommand &cmd);
   bool OnUpdate(int time);
   void OnRender();
 
-  GameStatus GetStatus() { return m_status; }
-  void Restart();
-  void Win() { m_status = GameStatus::Won; }
-  void Lose() { m_status = GameStatus::Lost; }
+  static bool IsPlaying();
+  static bool HasWon();
+  static bool HasLost();
+  static void Restart();
+  static void Win();
+  static void Lose();
 
 private:
-  GameStatus m_status{GameStatus::Playing};
   GameConfig m_config{BeginnerConfig};
+  GameStatus m_status{GameStatus::Playing};
 
   int m_startTime{0};
   int m_updateTime{0};
   int m_elapsedTime{0};
 
-  std::unique_ptr<RestartButton> m_restartButton;
-  std::unique_ptr<Board> m_board;
+  RestartButton m_restartButton;
+  Board m_board;
 
 private:
   void RenderBackground();

@@ -226,8 +226,7 @@ bool Board::OnLeftClick(int px, int py) {
       block->IsFlagged = false;
     }
     block->IsExploded = true;
-    Game &game{Game::Get()};
-    game.Lose();
+    Game::Lose();
     Application::PlayLosingSound();
   } else {
     if (block->NearMineCount == 0) {
@@ -242,8 +241,7 @@ bool Board::OnLeftClick(int px, int py) {
     if (std::all_of(m_blocks.begin(), m_blocks.end(), [](const auto &block) {
           return block->IsMine ? !block->IsOpen : block->IsOpen;
         })) {
-      Game &game{Game::Get()};
-      game.Win();
+      Game::Win();
       Application::PlayWinningSound();
     } else {
       Application::PlayClickingSound();

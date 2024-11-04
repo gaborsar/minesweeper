@@ -1,6 +1,5 @@
 #include "Engine.h"
 #include <cassert>
-#include <iostream>
 
 namespace Engine {
 static Window *s_window{nullptr};
@@ -15,10 +14,7 @@ Window::Window(const char *title, int w, int h) {
   s_window = this;
 }
 
-Window::~Window() {
-  SDL_DestroyWindow(m_window);
-  std::cout << "Window destructor called" << std::endl;
-}
+Window::~Window() { SDL_DestroyWindow(m_window); }
 
 void Window::Resize(int w, int h) {
   SDL_SetWindowSize(s_window->m_window, w, h);

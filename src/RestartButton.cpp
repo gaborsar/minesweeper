@@ -7,8 +7,10 @@ namespace Minesweeper {
 RestartButton::RestartButton(int x, int y) : m_x{x}, m_y{y} {}
 
 bool RestartButton::OnInput(Engine::UserCommand &cmd) {
-  if (cmd.type != Engine::UserCommandType::MouseButtonDown ||
-      cmd.mouseButton != Engine::MouseButton::Left) {
+  if (cmd.type != Engine::UserCommandType::MouseButtonDown) {
+    return false;
+  }
+  if (cmd.mouseButton != Engine::MouseButton::Left) {
     return false;
   }
   if (cmd.mouseX < m_x || cmd.mouseX > m_x + 36) {
@@ -17,19 +19,16 @@ bool RestartButton::OnInput(Engine::UserCommand &cmd) {
   if (cmd.mouseY < m_y || cmd.mouseY > m_y + 36) {
     return false;
   }
-
-  Game &game{Game::Get()};
-  game.Restart();
-
+  Game::Restart();
   return true;
 }
 
 void RestartButton::OnRender() {
-  Game &game{Game::Get()};
-  bool isSad{game.GetStatus() == GameStatus::Lost};
-  Application::RenderSprite(m_x, m_y,
-                            isSad ? Sprites::RestartButtonSad
-                                  : Sprites::RestartButtonHappy);
+  if (Game::HasLost()) {
+    Application::RenderSprite(m_x, m_y, Sprites::RestartButtonSad);
+  } else {
+    Application::RenderSprite(m_x, m_y, Sprites::RestartButtonHappy);
+  }
 }
 
 void RestartButton::Move(int x, int y) {

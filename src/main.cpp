@@ -16,10 +16,10 @@ int main() {
     return 1;
   }
 
+  // INIT GAME
+
   auto application{std::make_unique<Minesweeper::Application>(
       "Minesweeper", windowSize.w, windowSize.h)};
-
-  // INIT GAME
 
   int startTime{static_cast<int>(SDL_GetTicks())};
 
