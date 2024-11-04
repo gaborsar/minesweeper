@@ -8,6 +8,7 @@ include_directories(minesweeper ${SDL2_INCLUDE_DIRS})
 
 add_executable(minesweeper
     src/main.cpp
+    src/core/Random.cpp
     src/core/SDLPtr.cpp
     src/game/Board.cpp
     src/game/GameSession.cpp

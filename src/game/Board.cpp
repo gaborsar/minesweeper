@@ -1,18 +1,15 @@
 #include "Board.h"
+#include "../core/Random.h"
 #include "../graphics/SpriteManager.h"
 #include "../graphics/SpriteRenderer.h"
 #include "../sound/SoundManager.h"
 #include "GameSession.h"
 #include <cassert>
-#include <random>
 
 #define MAX_SIZE 30 * 16
 
 namespace Game {
-Board::Board() {
-  m_mt = static_cast<std::mt19937>(std::random_device{}());
-  m_blocks = new Block[MAX_SIZE]{};
-}
+Board::Board() { m_blocks = new Block[MAX_SIZE]{}; }
 
 Board::~Board() { delete[] m_blocks; }
 
@@ -39,16 +36,13 @@ void Board::Init(int boardWidth, int boardHeight, int numberOfMines) {
     block->Groups.second = 0;
   }
 
-  std::uniform_int_distribution<int> randX{0, m_boardWidth - 1};
-  std::uniform_int_distribution<int> randY{0, m_boardHeight - 1};
-
   for (int i{0}; i < numberOfMines; ++i) {
-    int x{randX(m_mt)};
-    int y{randY(m_mt)};
+    int x{Random::Int(0, m_boardWidth - 1)};
+    int y{Random::Int(0, m_boardHeight - 1)};
     int j{PosToIndex(x, y)};
     while ((&m_blocks[j])->IsMine) {
-      x = randX(m_mt);
-      y = randY(m_mt);
+      x = Random::Int(0, m_boardWidth - 1);
+      y = Random::Int(0, m_boardHeight - 1);
       j = PosToIndex(x, y);
     }
     PlaceMine(x, y);

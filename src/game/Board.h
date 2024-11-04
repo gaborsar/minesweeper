@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SDL.h>
-#include <random>
 #include <utility>
 
 namespace Game {
@@ -28,8 +27,6 @@ public:
   int GetNumberOfFlags();
 
 private:
-  std::mt19937 m_mt;
-
   int m_x{0};
   int m_y{0};
 

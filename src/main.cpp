@@ -1,3 +1,4 @@
+#include "./core/Random.h"
 #include "./core/SDLPtr.h"
 #include "./game/GameSession.h"
 #include "./graphics/Renderer.h"
@@ -13,6 +14,7 @@ int main() {
   Game::Size windowSize{Game::GetWindowSize(config)};
 
   // init shared static objects and resources
+  auto random{std::make_unique<Game::Random>()};
   auto sdl{std::make_unique<Game::SDLPtr>()};
   auto window{
       std::make_unique<Game::Window>("Game", windowSize.w, windowSize.h)};
