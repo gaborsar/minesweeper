@@ -1,4 +1,5 @@
 #include "Board.h"
+#include "../graphics/SpriteManager.h"
 #include "../graphics/SpriteRenderer.h"
 #include "../sound/SoundManager.h"
 #include "GameSession.h"
@@ -89,22 +90,23 @@ void Board::OnRender() {
       Block block{m_blocks[i]};
       if (block.IsOpen) {
         if (block.IsExploded) {
-          SpriteRenderer::RenderSprite(px, py, Sprites::BlockMineExploded);
+          SpriteRenderer::RenderSprite(px, py,
+                                       SpriteManager::BlockMineExploded);
           continue;
         }
         if (block.IsMine) {
-          SpriteRenderer::RenderSprite(px, py, Sprites::BlockMine);
+          SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockMine);
           continue;
         }
-        SpriteRenderer::RenderSprite(px, py,
-                                     Sprites::BlockDigits[block.NearMineCount]);
+        SpriteRenderer::RenderSprite(
+            px, py, SpriteManager::BlockDigits[block.NearMineCount]);
         continue;
       }
       if (block.IsFlagged) {
-        SpriteRenderer::RenderSprite(px, py, Sprites::BlockFlagged);
+        SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockFlagged);
         continue;
       }
-      SpriteRenderer::RenderSprite(px, py, Sprites::BlockClosed);
+      SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockClosed);
     }
   }
 }

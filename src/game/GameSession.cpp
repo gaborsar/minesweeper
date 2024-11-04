@@ -1,4 +1,5 @@
 #include "GameSession.h"
+#include "../graphics/SpriteManager.h"
 #include "../graphics/SpriteRenderer.h"
 #include "../graphics/Window.h"
 #include <cassert>
@@ -100,39 +101,39 @@ void GameSession::RenderBackground() {
   int y2{20 + 60};
   int y3{y2 + 20 + m_config.boardHeight * 30};
 
-  SpriteRenderer::RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
-  SpriteRenderer::RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
+  SpriteRenderer::RenderSprite(x1, y1, SpriteManager::FrameTopLeftCorner);
+  SpriteRenderer::RenderSprite(x2, y1, SpriteManager::FrameTopRightCorner);
 
-  SpriteRenderer::RenderSprite(x1, y3, Sprites::FrameBottomLeftCorner);
-  SpriteRenderer::RenderSprite(x2, y3, Sprites::FrameBottomRightCorner);
+  SpriteRenderer::RenderSprite(x1, y3, SpriteManager::FrameBottomLeftCorner);
+  SpriteRenderer::RenderSprite(x2, y3, SpriteManager::FrameBottomRightCorner);
 
-  SpriteRenderer::RenderSprite(x1, y2, Sprites::FrameLeftJoint);
-  SpriteRenderer::RenderSprite(x2, y2, Sprites::FrameRightJoint);
+  SpriteRenderer::RenderSprite(x1, y2, SpriteManager::FrameLeftJoint);
+  SpriteRenderer::RenderSprite(x2, y2, SpriteManager::FrameRightJoint);
 
   for (int i{0}; i < m_config.boardWidth * 3; ++i) {
     int x{20 + i * 10};
-    SpriteRenderer::RenderSprite(x, y1, Sprites::FrameHorizontal);
-    SpriteRenderer::RenderSprite(x, y2, Sprites::FrameHorizontal);
-    SpriteRenderer::RenderSprite(x, y3, Sprites::FrameHorizontal);
+    SpriteRenderer::RenderSprite(x, y1, SpriteManager::FrameHorizontal);
+    SpriteRenderer::RenderSprite(x, y2, SpriteManager::FrameHorizontal);
+    SpriteRenderer::RenderSprite(x, y3, SpriteManager::FrameHorizontal);
   }
 
   for (int i{0}; i < 6; ++i) {
     int y{20 + i * 10};
-    SpriteRenderer::RenderSprite(x1, y, Sprites::FrameVertical);
-    SpriteRenderer::RenderSprite(x2, y, Sprites::FrameVertical);
+    SpriteRenderer::RenderSprite(x1, y, SpriteManager::FrameVertical);
+    SpriteRenderer::RenderSprite(x2, y, SpriteManager::FrameVertical);
   }
 
   for (int i{0}; i < m_config.boardHeight * 3; ++i) {
     int y{y2 + 20 + i * 10};
-    SpriteRenderer::RenderSprite(x1, y, Sprites::FrameVertical);
-    SpriteRenderer::RenderSprite(x2, y, Sprites::FrameVertical);
+    SpriteRenderer::RenderSprite(x1, y, SpriteManager::FrameVertical);
+    SpriteRenderer::RenderSprite(x2, y, SpriteManager::FrameVertical);
   }
 
   for (int i{0}; i < 6; ++i) {
     for (int j{0}; j < m_config.boardWidth * 3; ++j) {
       int x{20 + j * 10};
       int y{20 + i * 10};
-      SpriteRenderer::RenderSprite(x, y, Sprites::FrameBase);
+      SpriteRenderer::RenderSprite(x, y, SpriteManager::FrameBase);
     }
   }
 }
@@ -162,13 +163,16 @@ void GameSession::RenderNumber(int px, int py, int n) {
   assert(d2 >= 0 && d2 <= 9);
   assert(d3 >= 0 && d3 <= 9);
 
-  SpriteRenderer::RenderSprite(px, py, Sprites::DigitBorder);
-  SpriteRenderer::RenderSprite(px + 2, py + 2, Sprites::LeftDigits[d1]);
+  SpriteRenderer::RenderSprite(px, py, SpriteManager::DigitBorder);
+  SpriteRenderer::RenderSprite(px + 2, py + 2, SpriteManager::LeftDigits[d1]);
   if (d1 == 0) {
-    SpriteRenderer::RenderSprite(px + 2 + 20, py + 2, Sprites::LeftDigits[d2]);
+    SpriteRenderer::RenderSprite(px + 2 + 20, py + 2,
+                                 SpriteManager::LeftDigits[d2]);
   } else {
-    SpriteRenderer::RenderSprite(px + 2 + 20, py + 2, Sprites::RightDigits[d2]);
+    SpriteRenderer::RenderSprite(px + 2 + 20, py + 2,
+                                 SpriteManager::RightDigits[d2]);
   }
-  SpriteRenderer::RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
+  SpriteRenderer::RenderSprite(px + 2 + 40, py + 2,
+                               SpriteManager::RightDigits[d3]);
 }
 } // namespace Game

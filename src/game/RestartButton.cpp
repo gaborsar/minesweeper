@@ -1,4 +1,5 @@
 #include "RestartButton.h"
+#include "../graphics/SpriteManager.h"
 #include "../graphics/SpriteRenderer.h"
 #include "GameSession.h"
 
@@ -27,9 +28,9 @@ bool RestartButton::OnInput(const SDL_Event &event) {
 
 void RestartButton::OnRender() {
   if (GameSession::HasLost()) {
-    SpriteRenderer::RenderSprite(m_x, m_y, Sprites::RestartButtonSad);
+    SpriteRenderer::RenderSprite(m_x, m_y, SpriteManager::RestartButtonSad);
   } else {
-    SpriteRenderer::RenderSprite(m_x, m_y, Sprites::RestartButtonHappy);
+    SpriteRenderer::RenderSprite(m_x, m_y, SpriteManager::RestartButtonHappy);
   }
 }
 } // namespace Game
