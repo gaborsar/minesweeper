@@ -4,6 +4,15 @@
 #include <array>
 
 namespace Minesweeper {
+class SpriteRenderer {
+public:
+  SpriteRenderer();
+  static void RenderSprite(int x, int y, const Engine::Rect &sprite);
+
+private:
+  Engine::Texture m_atlas;
+};
+
 namespace Sprites {
 constexpr Engine::Rect BlockClosed{0, 0, 30, 30};
 constexpr Engine::Rect BlockFlagged{30, 0, 30, 30};

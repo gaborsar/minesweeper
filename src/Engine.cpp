@@ -5,6 +5,17 @@ namespace Engine {
 static Window *s_window{nullptr};
 static Renderer *s_renderer{nullptr};
 
+SDLSubsystem::SDLSubsystem() {
+  int result = SDL_Init(SDL_INIT_EVERYTHING);
+  assert(result >= 0);
+}
+
+SDLSubsystem::~SDLSubsystem() { SDL_Quit(); }
+
+int Timer::GetTicks() { return SDL_GetTicks(); }
+
+void Timer::Delay(int ms) { SDL_Delay(ms); }
+
 Window::Window(const char *title, int w, int h) {
   SDL_Window *window{SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED, w, h,
@@ -81,5 +92,5 @@ Sound::Sound(const char *file) {
 
 Sound::~Sound() { Mix_FreeChunk(m_chunk); }
 
-void Sound::Play(int channel) { Mix_PlayChannel(channel, m_chunk, 0); }
+void Sound::Play() { Mix_PlayChannel(1, m_chunk, 0); }
 } // namespace Engine

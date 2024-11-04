@@ -1,24 +1,20 @@
 #pragma once
 
 #include "Engine.h"
+#include "SoundManager.h"
+#include "SpriteRenderer.h"
 
 namespace Minesweeper {
 class Application {
 public:
   Application(const char *title, int w, int h);
-  static void ResizeWindow(int w, int h);
-  static void RenderSprite(int x, int y, const Engine::Rect &sprite);
-  static void PlayClickingSound();
-  static void PlayWinningSound();
-  static void PlayLosingSound();
 
 private:
+  Engine::SDLSubsystem m_sdl{};
   Engine::Window m_window;
-  Engine::Renderer m_renderer;
-  Engine::Texture m_texture;
-  Engine::Mixer m_mixer;
-  Engine::Sound m_clickingSound;
-  Engine::Sound m_winningSound;
-  Engine::Sound m_losingSound;
+  Engine::Renderer m_renderer{};
+  Engine::Mixer m_mixer{};
+  Minesweeper::SpriteRenderer m_spriteRenderer{};
+  Minesweeper::SoundManager m_soundManager{};
 };
 } // namespace Minesweeper

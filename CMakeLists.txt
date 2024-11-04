@@ -13,6 +13,8 @@ add_executable(minesweeper
     src/Engine.cpp
     src/Game.cpp
     src/RestartButton.cpp
+    src/SoundManager.cpp
+    src/SpriteRenderer.cpp
 )
 
 target_link_libraries(minesweeper ${SDL2_LIBRARIES})

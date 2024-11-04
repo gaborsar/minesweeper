@@ -1,7 +1,7 @@
 #include "Board.h"
-#include "Application.h"
 #include "Game.h"
-#include "Sprites.h"
+#include "SoundManager.h"
+#include "SpriteRenderer.h"
 #include <algorithm>
 #include <cassert>
 #include <random>
@@ -74,22 +74,22 @@ void Board::OnRender() {
       auto &block{m_blocks[i]};
       if (block->IsOpen) {
         if (block->IsExploded) {
-          Application::RenderSprite(px, py, Sprites::BlockMineExploded);
+          SpriteRenderer::RenderSprite(px, py, Sprites::BlockMineExploded);
           continue;
         }
         if (block->IsMine) {
-          Application::RenderSprite(px, py, Sprites::BlockMine);
+          SpriteRenderer::RenderSprite(px, py, Sprites::BlockMine);
           continue;
         }
-        Application::RenderSprite(px, py,
-                                  Sprites::BlockDigits[block->NearMineCount]);
+        SpriteRenderer::RenderSprite(
+            px, py, Sprites::BlockDigits[block->NearMineCount]);
         continue;
       }
       if (block->IsFlagged) {
-        Application::RenderSprite(px, py, Sprites::BlockFlagged);
+        SpriteRenderer::RenderSprite(px, py, Sprites::BlockFlagged);
         continue;
       }
-      Application::RenderSprite(px, py, Sprites::BlockClosed);
+      SpriteRenderer::RenderSprite(px, py, Sprites::BlockClosed);
     }
   }
 }
@@ -226,8 +226,8 @@ bool Board::OnLeftClick(int px, int py) {
       block->IsFlagged = false;
     }
     block->IsExploded = true;
+    SoundManager::PlayLosingSound();
     Game::Lose();
-    Application::PlayLosingSound();
   } else {
     if (block->NearMineCount == 0) {
       int g{block->Groups.first};
@@ -241,10 +241,10 @@ bool Board::OnLeftClick(int px, int py) {
     if (std::all_of(m_blocks.begin(), m_blocks.end(), [](const auto &block) {
           return block->IsMine ? !block->IsOpen : block->IsOpen;
         })) {
+      SoundManager::PlayWinningSound();
       Game::Win();
-      Application::PlayWinningSound();
     } else {
-      Application::PlayClickingSound();
+      SoundManager::PlayClickingSound();
     }
   }
   return true;

@@ -42,6 +42,18 @@ inline constexpr bool IsPointWithinRect(const Rect &rect, int px, int py) {
          py < rect.y + rect.w;
 }
 
+class SDLSubsystem {
+public:
+  SDLSubsystem();
+  ~SDLSubsystem();
+};
+
+class Timer {
+public:
+  static int GetTicks();
+  static void Delay(int ms);
+};
+
 class Window {
 public:
   Window(const char *title, int w, int h);
@@ -96,9 +108,9 @@ class Sound {
 public:
   Sound(const char *file);
   ~Sound();
-  void Play(int channel = 1);
+  void Play();
 
 private:
-  Mix_Chunk *m_chunk;
+  Mix_Chunk *m_chunk{nullptr};
 };
 } // namespace Engine
