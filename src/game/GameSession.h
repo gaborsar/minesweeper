@@ -5,12 +5,12 @@
 #include "RestartButton.h"
 #include <SDL.h>
 
-namespace Minesweeper {
+namespace Game {
 enum class GameStatus { Playing, Won, Lost };
 
-class Game {
+class GameSession {
 public:
-  Game(const GameConfig &config, int time);
+  GameSession(const GameConfig &config, int time);
 
   bool OnInput(const SDL_Event &event);
   bool OnUpdate(int time);
@@ -40,4 +40,4 @@ private:
   void RenderTimer();
   void RenderNumber(int px, int py, int n);
 };
-} // namespace Minesweeper
+} // namespace Game

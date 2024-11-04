@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Engine.h"
+#include "Sound.h"
 
-namespace Minesweeper {
+namespace Game {
 class SoundManager {
 public:
   SoundManager();
@@ -11,8 +11,8 @@ public:
   static void PlayLosingSound();
 
 private:
-  Engine::Sound m_clickingSound;
-  Engine::Sound m_winningSound;
-  Engine::Sound m_losingSound;
+  Sound m_clickingSound;
+  Sound m_winningSound;
+  Sound m_losingSound;
 };
-} // namespace Minesweeper
+} // namespace Game

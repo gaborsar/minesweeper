@@ -4,7 +4,7 @@
 #include <random>
 #include <utility>
 
-namespace Minesweeper {
+namespace Game {
 struct Block {
   bool IsOpen{false};
   bool IsFlagged{false};
@@ -48,4 +48,4 @@ private:
 
   inline int PosToIndex(int x, int y) { return y * m_boardWidth + x; }
 };
-} // namespace Minesweeper
+} // namespace Game

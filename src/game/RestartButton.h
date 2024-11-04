@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 
-namespace Minesweeper {
+namespace Game {
 class RestartButton {
 public:
   void Move(int x, int y);
@@ -13,4 +13,4 @@ private:
   int m_x{0};
   int m_y{0};
 };
-} // namespace Minesweeper
+} // namespace Game

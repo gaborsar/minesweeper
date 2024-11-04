@@ -1,25 +1,28 @@
-#include "Engine.h"
-#include "Game.h"
-#include "SoundManager.h"
-#include "SpriteRenderer.h"
+#include "./core/SDLPtr.h"
+#include "./game/GameSession.h"
+#include "./graphics/Renderer.h"
+#include "./graphics/SpriteRenderer.h"
+#include "./graphics/Window.h"
+#include "./sound/Mixer.h"
+#include "./sound/SoundManager.h"
 #include <memory>
 
 int main() {
   // default difficulty and initial window size
-  Minesweeper::GameConfig config{Minesweeper::BeginnerConfig};
-  Engine::Size windowSize{Minesweeper::GetWindowSize(config)};
+  Game::GameConfig config{Game::BeginnerConfig};
+  Game::Size windowSize{Game::GetWindowSize(config)};
 
   // init shared static objects and resources
-  auto sdl{std::make_unique<Engine::SDLSubsystem>()};
-  auto window{std::make_unique<Engine::Window>("Minesweeper", windowSize.w,
-                                               windowSize.h)};
-  auto renderer{std::make_unique<Engine::Renderer>()};
-  auto mixer{std::make_unique<Engine::Mixer>()};
-  auto spriteRenderer{std::make_unique<Minesweeper::SpriteRenderer>()};
-  auto soundManager{std::make_unique<Minesweeper::SoundManager>()};
+  auto sdl{std::make_unique<Game::SDLPtr>()};
+  auto window{
+      std::make_unique<Game::Window>("Game", windowSize.w, windowSize.h)};
+  auto renderer{std::make_unique<Game::Renderer>()};
+  auto mixer{std::make_unique<Game::Mixer>()};
+  auto spriteRenderer{std::make_unique<Game::SpriteRenderer>()};
+  auto soundManager{std::make_unique<Game::SoundManager>()};
 
   // init game session
-  auto game{std::make_unique<Minesweeper::Game>(config, SDL_GetTicks())};
+  auto game{std::make_unique<Game::GameSession>(config, SDL_GetTicks())};
 
   bool running{true};
   bool shouldRender{true};
@@ -42,9 +45,9 @@ int main() {
     shouldRender = shouldRender || game->OnUpdate(startTicks);
 
     if (shouldRender) {
-      Engine::Renderer::Clear();
+      Game::Renderer::Clear();
       game->OnRender();
-      Engine::Renderer::Render();
+      Game::Renderer::Render();
       shouldRender = false;
     }
 

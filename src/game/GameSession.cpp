@@ -1,11 +1,12 @@
-#include "Game.h"
-#include "SpriteRenderer.h"
+#include "GameSession.h"
+#include "../graphics/SpriteRenderer.h"
+#include "../graphics/Window.h"
 #include <cassert>
 
-namespace Minesweeper {
-static Game *s_instance{nullptr};
+namespace Game {
+static GameSession *s_instance{nullptr};
 
-Game::Game(const GameConfig &config, int time)
+GameSession::GameSession(const GameConfig &config, int time)
     : m_config{config}, m_startTime{time}, m_updateTime{time},
       m_restartButton{RestartButton{}}, m_board{Board{}} {
   m_restartButton.Move(20 + m_config.boardWidth * 30 / 2 - 18, 20 + 12);
@@ -14,7 +15,7 @@ Game::Game(const GameConfig &config, int time)
   s_instance = this;
 }
 
-bool Game::OnInput(const SDL_Event &event) {
+bool GameSession::OnInput(const SDL_Event &event) {
   if (m_restartButton.OnInput(event)) {
     return true;
   }
@@ -24,7 +25,7 @@ bool Game::OnInput(const SDL_Event &event) {
   return false;
 }
 
-bool Game::OnUpdate(int time) {
+bool GameSession::OnUpdate(int time) {
   if (m_status != GameStatus::Playing) {
     return false;
   }
@@ -43,7 +44,7 @@ bool Game::OnUpdate(int time) {
   return true;
 }
 
-void Game::OnRender() {
+void GameSession::OnRender() {
   RenderBackground();
   RenderCounter();
   RenderTimer();
@@ -51,13 +52,15 @@ void Game::OnRender() {
   m_board.OnRender();
 }
 
-bool Game::IsPlaying() { return s_instance->m_status == GameStatus::Playing; }
+bool GameSession::IsPlaying() {
+  return s_instance->m_status == GameStatus::Playing;
+}
 
-bool Game::HasWon() { return s_instance->m_status == GameStatus::Won; }
+bool GameSession::HasWon() { return s_instance->m_status == GameStatus::Won; }
 
-bool Game::HasLost() { return s_instance->m_status == GameStatus::Lost; }
+bool GameSession::HasLost() { return s_instance->m_status == GameStatus::Lost; }
 
-void Game::Restart() {
+void GameSession::Restart() {
   s_instance->m_status = GameStatus::Playing;
   s_instance->m_startTime = s_instance->m_updateTime;
   if (s_instance->m_board.HasChanged()) {
@@ -74,8 +77,8 @@ void Game::Restart() {
       s_instance->m_config = BeginnerConfig;
     }
 
-    Engine::Size windowSize{Minesweeper::GetWindowSize(s_instance->m_config)};
-    Engine::Window::Resize(windowSize.w, windowSize.h);
+    Size windowSize{GetWindowSize(s_instance->m_config)};
+    Window::Resize(windowSize.w, windowSize.h);
 
     s_instance->m_restartButton.Move(
         20 + s_instance->m_config.boardWidth * 30 / 2 - 18, 20 + 12);
@@ -85,11 +88,11 @@ void Game::Restart() {
   }
 }
 
-void Game::Win() { s_instance->m_status = GameStatus::Won; }
+void GameSession::Win() { s_instance->m_status = GameStatus::Won; }
 
-void Game::Lose() { s_instance->m_status = GameStatus::Lost; }
+void GameSession::Lose() { s_instance->m_status = GameStatus::Lost; }
 
-void Game::RenderBackground() {
+void GameSession::RenderBackground() {
   int x1{0};
   int x2{20 + m_config.boardWidth * 30};
 
@@ -134,7 +137,7 @@ void Game::RenderBackground() {
   }
 }
 
-void Game::RenderCounter() {
+void GameSession::RenderCounter() {
   int count{m_config.numberOfMines - m_board.GetNumberOfFlags()};
   if (count < 0) {
     count = 0;
@@ -142,11 +145,11 @@ void Game::RenderCounter() {
   RenderNumber(30, 30, count);
 }
 
-void Game::RenderTimer() {
+void GameSession::RenderTimer() {
   RenderNumber(20 + m_config.boardWidth * 30 - 64 - 10, 30, m_elapsedTime);
 }
 
-void Game::RenderNumber(int px, int py, int n) {
+void GameSession::RenderNumber(int px, int py, int n) {
   int d3{n};
 
   int d1{n / 100};
@@ -168,4 +171,4 @@ void Game::RenderNumber(int px, int py, int n) {
   }
   SpriteRenderer::RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
 }
-} // namespace Minesweeper
+} // namespace Game

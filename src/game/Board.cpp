@@ -1,13 +1,13 @@
 #include "Board.h"
-#include "Game.h"
-#include "SoundManager.h"
-#include "SpriteRenderer.h"
+#include "../graphics/SpriteRenderer.h"
+#include "../sound/SoundManager.h"
+#include "GameSession.h"
 #include <cassert>
 #include <random>
 
 #define MAX_SIZE 30 * 16
 
-namespace Minesweeper {
+namespace Game {
 Board::Board() {
   m_mt = static_cast<std::mt19937>(std::random_device{}());
   m_blocks = new Block[MAX_SIZE]{};
@@ -248,7 +248,7 @@ bool Board::OnLeftClick(int px, int py) {
     }
     block->IsExploded = true;
     SoundManager::PlayLosingSound();
-    Game::Lose();
+    GameSession::Lose();
   } else {
     if (block->NearMineCount == 0) {
       int g{block->Groups.first};
@@ -270,7 +270,7 @@ bool Board::OnLeftClick(int px, int py) {
     }
     if (hasWon) {
       SoundManager::PlayWinningSound();
-      Game::Win();
+      GameSession::Win();
     } else {
       SoundManager::PlayClickingSound();
     }
@@ -295,4 +295,4 @@ bool Board::OnRightClick(int px, int py) {
   block->IsFlagged = !block->IsFlagged;
   return true;
 }
-} // namespace Minesweeper
+} // namespace Game

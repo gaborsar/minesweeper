@@ -1,8 +1,8 @@
 #include "RestartButton.h"
-#include "Game.h"
-#include "SpriteRenderer.h"
+#include "../graphics/SpriteRenderer.h"
+#include "GameSession.h"
 
-namespace Minesweeper {
+namespace Game {
 void RestartButton::Move(int x, int y) {
   m_x = x;
   m_y = y;
@@ -21,15 +21,15 @@ bool RestartButton::OnInput(const SDL_Event &event) {
   if (event.button.y < m_y || event.button.y > m_y + 36) {
     return false;
   }
-  Game::Restart();
+  GameSession::Restart();
   return true;
 }
 
 void RestartButton::OnRender() {
-  if (Game::HasLost()) {
+  if (GameSession::HasLost()) {
     SpriteRenderer::RenderSprite(m_x, m_y, Sprites::RestartButtonSad);
   } else {
     SpriteRenderer::RenderSprite(m_x, m_y, Sprites::RestartButtonHappy);
   }
 }
-} // namespace Minesweeper
+} // namespace Game
