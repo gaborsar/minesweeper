@@ -10,7 +10,7 @@ enum class GameStatus { Playing, Won, Lost };
 
 class Game {
 public:
-  Game(const GameConfig &config);
+  Game(const GameConfig &config, int time);
 
   bool OnInput(const SDL_Event &event);
   bool OnUpdate(int time);

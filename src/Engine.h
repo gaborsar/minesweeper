@@ -29,12 +29,6 @@ public:
   ~SDLSubsystem();
 };
 
-class Timer {
-public:
-  static int GetTicks();
-  static void Delay(int ms);
-};
-
 class Window {
 public:
   Window(const char *title, int w, int h);

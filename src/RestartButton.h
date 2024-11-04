@@ -5,9 +5,9 @@
 namespace Minesweeper {
 class RestartButton {
 public:
+  void Move(int x, int y);
   bool OnInput(const SDL_Event &event);
   void OnRender();
-  void Move(int x, int y);
 
 private:
   int m_x{0};

@@ -5,15 +5,12 @@
 namespace Minesweeper {
 static Game *s_instance{nullptr};
 
-Game::Game(const GameConfig &config)
-    : m_config{config}, m_restartButton{RestartButton{}}, m_board{Board{}} {
-  m_startTime = Engine::Timer::GetTicks();
-  m_updateTime = m_startTime;
-
+Game::Game(const GameConfig &config, int time)
+    : m_config{config}, m_startTime{time}, m_updateTime{time},
+      m_restartButton{RestartButton{}}, m_board{Board{}} {
   m_restartButton.Move(20 + m_config.boardWidth * 30 / 2 - 18, 20 + 12);
   m_board.Move(20, 20 + 60 + 20);
   m_board.Init(config.boardWidth, config.boardHeight, config.numberOfMines);
-
   s_instance = this;
 }
 

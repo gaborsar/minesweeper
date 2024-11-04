@@ -3,6 +3,11 @@
 #include "SpriteRenderer.h"
 
 namespace Minesweeper {
+void RestartButton::Move(int x, int y) {
+  m_x = x;
+  m_y = y;
+}
+
 bool RestartButton::OnInput(const SDL_Event &event) {
   if (event.type != SDL_MOUSEBUTTONDOWN) {
     return false;
@@ -26,10 +31,5 @@ void RestartButton::OnRender() {
   } else {
     SpriteRenderer::RenderSprite(m_x, m_y, Sprites::RestartButtonHappy);
   }
-}
-
-void RestartButton::Move(int x, int y) {
-  m_x = x;
-  m_y = y;
 }
 } // namespace Minesweeper

@@ -19,14 +19,14 @@ int main() {
   auto soundManager{std::make_unique<Minesweeper::SoundManager>()};
 
   // init game session
-  auto game{std::make_unique<Minesweeper::Game>(config)};
+  auto game{std::make_unique<Minesweeper::Game>(config, SDL_GetTicks())};
 
   bool running{true};
   bool shouldRender{true};
   SDL_Event event;
 
   while (running) {
-    int startTicks{Engine::Timer::GetTicks()};
+    Uint32 startTicks{SDL_GetTicks()};
 
     while (SDL_PollEvent(&event)) {
       switch (event.type) {
@@ -48,12 +48,12 @@ int main() {
       shouldRender = false;
     }
 
-    int endTicks{Engine::Timer::GetTicks()};
-    int elapsed{endTicks - startTicks};
+    Uint32 endTicks{SDL_GetTicks()};
+    Uint32 elapsed{endTicks - startTicks};
 
     constexpr int targetDelay{1000 / 60};
     if (elapsed < targetDelay) {
-      Engine::Timer::Delay(targetDelay - elapsed);
+      SDL_Delay(targetDelay - elapsed);
     }
   }
 

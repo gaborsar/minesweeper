@@ -16,10 +16,6 @@ SDLSubsystem::SDLSubsystem() {
 
 SDLSubsystem::~SDLSubsystem() { SDL_Quit(); }
 
-int Timer::GetTicks() { return SDL_GetTicks(); }
-
-void Timer::Delay(int ms) { SDL_Delay(ms); }
-
 Window::Window(const char *title, int w, int h) {
   SDL_Window *window{SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED, w, h,
