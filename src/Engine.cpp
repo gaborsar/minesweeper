@@ -1,5 +1,5 @@
 #include "Engine.h"
-#include <cassert>
+#include <sstream>
 
 namespace Engine {
 static Window *s_window{nullptr};
@@ -7,7 +7,11 @@ static Renderer *s_renderer{nullptr};
 
 SDLSubsystem::SDLSubsystem() {
   int result = SDL_Init(SDL_INIT_EVERYTHING);
-  assert(result >= 0);
+  if (result < 0) {
+    std::stringstream msg{};
+    msg << "failed to init SDL: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
 }
 
 SDLSubsystem::~SDLSubsystem() { SDL_Quit(); }
@@ -20,7 +24,11 @@ Window::Window(const char *title, int w, int h) {
   SDL_Window *window{SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED,
                                       SDL_WINDOWPOS_CENTERED, w, h,
                                       SDL_WINDOW_SHOWN)};
-  assert(window);
+  if (!window) {
+    std::stringstream msg{};
+    msg << "failed to create SDL window: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
   m_window = window;
   s_window = this;
 }
@@ -36,7 +44,11 @@ void Window::Resize(int w, int h) {
 Renderer::Renderer() {
   SDL_Renderer *renderer{
       SDL_CreateRenderer(s_window->m_window, -1, SDL_RENDERER_ACCELERATED)};
-  assert(renderer);
+  if (!renderer) {
+    std::stringstream msg{};
+    msg << "failed to create SDL renderer: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
   m_renderer = renderer;
   s_renderer = this;
 }
@@ -61,7 +73,11 @@ Surface::Surface(const char *file, ImageType type) {
     surface = SDL_LoadBMP(file);
     break;
   }
-  assert(surface);
+  if (!surface) {
+    std::stringstream msg{};
+    msg << "failed to load SDL surface: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
   m_surface = surface;
 }
 
@@ -71,7 +87,11 @@ Texture::Texture(const char *file, ImageType type) {
   Surface surface{file, type};
   SDL_Texture *texture{
       SDL_CreateTextureFromSurface(s_renderer->m_renderer, surface.m_surface)};
-  assert(texture);
+  if (!texture) {
+    std::stringstream msg{};
+    msg << "failed to load SDL texture: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
   m_texture = texture;
 }
 
@@ -79,14 +99,22 @@ Texture::~Texture() { SDL_DestroyTexture(m_texture); }
 
 Mixer::Mixer() {
   int result = Mix_OpenAudio(4410, MIX_DEFAULT_FORMAT, 2, 1024);
-  assert(result >= 0);
+  if (result < 0) {
+    std::stringstream msg{};
+    msg << "failed to open SDL audio" << Mix_GetError();
+    throw std::runtime_error(msg.str());
+  }
 }
 
 Mixer::~Mixer() { Mix_Quit(); }
 
 Sound::Sound(const char *file) {
   Mix_Chunk *chunk{Mix_LoadWAV(file)};
-  assert(chunk);
+  if (!chunk) {
+    std::stringstream msg{};
+    msg << "failed to load SDL audio chunk" << Mix_GetError();
+    throw std::runtime_error(msg.str());
+  }
   m_chunk = chunk;
 }
 
