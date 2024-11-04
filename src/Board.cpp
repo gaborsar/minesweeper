@@ -1,7 +1,6 @@
 #include "Board.h"
+#include "Application.h"
 #include "Game.h"
-#include "Renderer.h"
-#include "Sound.h"
 #include "Sprites.h"
 #include <algorithm>
 #include <cassert>
@@ -42,8 +41,8 @@ void Board::Init() {
   CreateGroups();
 }
 
-bool Board::OnInput(UserCommand &cmd) {
-  if (cmd.type != UserCommandType::MouseButtonDown) {
+bool Board::OnInput(Engine::UserCommand &cmd) {
+  if (cmd.type != Engine::UserCommandType::MouseButtonDown) {
     return false;
   }
   if (cmd.mouseX < m_x || cmd.mouseX > m_x + m_boardWidth * 30) {
@@ -56,10 +55,10 @@ bool Board::OnInput(UserCommand &cmd) {
   int x{cmd.mouseX - m_x};
   int y{cmd.mouseY - m_y};
 
-  if (cmd.mouseButton == MouseButton::Left) {
+  if (cmd.mouseButton == Engine::MouseButton::Left) {
     return OnLeftClick(x, y);
   }
-  if (cmd.mouseButton == MouseButton::Right) {
+  if (cmd.mouseButton == Engine::MouseButton::Right) {
     return OnRightClick(x, y);
   }
 
@@ -67,7 +66,6 @@ bool Board::OnInput(UserCommand &cmd) {
 }
 
 void Board::OnRender() {
-  Renderer &renderer{Renderer::Get()};
   for (int y{0}; y < m_boardHeight; ++y) {
     for (int x{0}; x < m_boardWidth; ++x) {
       int i{PosToIndex(x, y)};
@@ -76,22 +74,22 @@ void Board::OnRender() {
       auto &block{m_blocks[i]};
       if (block->IsOpen) {
         if (block->IsExploded) {
-          renderer.RenderSprite(px, py, Sprites::BlockMineExploded);
+          Application::RenderSprite(px, py, Sprites::BlockMineExploded);
           continue;
         }
         if (block->IsMine) {
-          renderer.RenderSprite(px, py, Sprites::BlockMine);
+          Application::RenderSprite(px, py, Sprites::BlockMine);
           continue;
         }
-        renderer.RenderSprite(px, py,
-                              Sprites::BlockDigits[block->NearMineCount]);
+        Application::RenderSprite(px, py,
+                                  Sprites::BlockDigits[block->NearMineCount]);
         continue;
       }
       if (block->IsFlagged) {
-        renderer.RenderSprite(px, py, Sprites::BlockFlagged);
+        Application::RenderSprite(px, py, Sprites::BlockFlagged);
         continue;
       }
-      renderer.RenderSprite(px, py, Sprites::BlockClosed);
+      Application::RenderSprite(px, py, Sprites::BlockClosed);
     }
   }
 }
@@ -230,7 +228,7 @@ bool Board::OnLeftClick(int px, int py) {
     block->IsExploded = true;
     Game &game{Game::Get()};
     game.Lose();
-    Sounds::LosingSound.Play();
+    Application::PlayLosingSound();
   } else {
     if (block->NearMineCount == 0) {
       int g{block->Groups.first};
@@ -246,9 +244,9 @@ bool Board::OnLeftClick(int px, int py) {
         })) {
       Game &game{Game::Get()};
       game.Win();
-      Sounds::WinningSound.Play();
+      Application::PlayWinningSound();
     } else {
-      Sounds::ClickingSound.Play();
+      Application::PlayClickingSound();
     }
   }
   return true;

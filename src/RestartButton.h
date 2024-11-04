@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Input.h"
+#include "Engine.h"
 
 namespace Minesweeper {
 class RestartButton {
 public:
   RestartButton(int x, int y);
-  bool OnInput(UserCommand &cmd);
+  bool OnInput(Engine::UserCommand &cmd);
   void OnRender();
   void Move(int x, int y);
 

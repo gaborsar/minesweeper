@@ -1,7 +1,6 @@
 #include "Game.h"
-#include "Renderer.h"
+#include "Application.h"
 #include "Sprites.h"
-#include "Window.h"
 #include <cassert>
 
 namespace Minesweeper {
@@ -38,9 +37,8 @@ void Game::Restart() {
       m_config = BeginnerConfig;
     }
 
-    Window &window{Window::Get()};
-    Size windowSize{Minesweeper::GetWindowSize(m_config)};
-    window.Resize(windowSize.w, windowSize.h);
+    Engine::Size windowSize{Minesweeper::GetWindowSize(m_config)};
+    Application::ResizeWindow(windowSize.w, windowSize.h);
 
     int btnX{20 + m_config.boardWidth * 30 / 2 - 18};
     int btnY{20 + 12};
@@ -54,7 +52,7 @@ void Game::Restart() {
   }
 }
 
-bool Game::OnInput(UserCommand &cmd) {
+bool Game::OnInput(Engine::UserCommand &cmd) {
   if (m_restartButton->OnInput(cmd)) {
     return true;
   }
@@ -99,41 +97,39 @@ void Game::RenderBackground() {
   int y2{20 + 60};
   int y3{y2 + 20 + m_config.boardHeight * 30};
 
-  Renderer &renderer{Renderer::Get()};
+  Application::RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
+  Application::RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
 
-  renderer.RenderSprite(x1, y1, Sprites::FrameTopLeftCorner);
-  renderer.RenderSprite(x2, y1, Sprites::FrameTopRightCorner);
+  Application::RenderSprite(x1, y3, Sprites::FrameBottomLeftCorner);
+  Application::RenderSprite(x2, y3, Sprites::FrameBottomRightCorner);
 
-  renderer.RenderSprite(x1, y3, Sprites::FrameBottomLeftCorner);
-  renderer.RenderSprite(x2, y3, Sprites::FrameBottomRightCorner);
-
-  renderer.RenderSprite(x1, y2, Sprites::FrameLeftJoint);
-  renderer.RenderSprite(x2, y2, Sprites::FrameRightJoint);
+  Application::RenderSprite(x1, y2, Sprites::FrameLeftJoint);
+  Application::RenderSprite(x2, y2, Sprites::FrameRightJoint);
 
   for (int i{0}; i < m_config.boardWidth * 3; ++i) {
     int x{20 + i * 10};
-    renderer.RenderSprite(x, y1, Sprites::FrameHorizontal);
-    renderer.RenderSprite(x, y2, Sprites::FrameHorizontal);
-    renderer.RenderSprite(x, y3, Sprites::FrameHorizontal);
+    Application::RenderSprite(x, y1, Sprites::FrameHorizontal);
+    Application::RenderSprite(x, y2, Sprites::FrameHorizontal);
+    Application::RenderSprite(x, y3, Sprites::FrameHorizontal);
   }
 
   for (int i{0}; i < 6; ++i) {
     int y{20 + i * 10};
-    renderer.RenderSprite(x1, y, Sprites::FrameVertical);
-    renderer.RenderSprite(x2, y, Sprites::FrameVertical);
+    Application::RenderSprite(x1, y, Sprites::FrameVertical);
+    Application::RenderSprite(x2, y, Sprites::FrameVertical);
   }
 
   for (int i{0}; i < m_config.boardHeight * 3; ++i) {
     int y{y2 + 20 + i * 10};
-    renderer.RenderSprite(x1, y, Sprites::FrameVertical);
-    renderer.RenderSprite(x2, y, Sprites::FrameVertical);
+    Application::RenderSprite(x1, y, Sprites::FrameVertical);
+    Application::RenderSprite(x2, y, Sprites::FrameVertical);
   }
 
   for (int i{0}; i < 6; ++i) {
     for (int j{0}; j < m_config.boardWidth * 3; ++j) {
       int x{20 + j * 10};
       int y{20 + i * 10};
-      renderer.RenderSprite(x, y, Sprites::FrameBase);
+      Application::RenderSprite(x, y, Sprites::FrameBase);
     }
   }
 }
@@ -163,22 +159,13 @@ void Game::RenderNumber(int px, int py, int n) {
   assert(d2 >= 0 && d2 <= 9);
   assert(d3 >= 0 && d3 <= 9);
 
-  Renderer &renderer{Renderer::Get()};
-
-  renderer.RenderSprite(px, py, Sprites::DigitBorder);
-  renderer.RenderSprite(px + 2, py + 2, Sprites::LeftDigits[d1]);
+  Application::RenderSprite(px, py, Sprites::DigitBorder);
+  Application::RenderSprite(px + 2, py + 2, Sprites::LeftDigits[d1]);
   if (d1 == 0) {
-    renderer.RenderSprite(px + 2 + 20, py + 2, Sprites::LeftDigits[d2]);
+    Application::RenderSprite(px + 2 + 20, py + 2, Sprites::LeftDigits[d2]);
   } else {
-    renderer.RenderSprite(px + 2 + 20, py + 2, Sprites::RightDigits[d2]);
+    Application::RenderSprite(px + 2 + 20, py + 2, Sprites::RightDigits[d2]);
   }
-  renderer.RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
-}
-
-void Game::RenderRestartButton() {
-  int x{20 + m_config.boardWidth * 30 / 2 - 18};
-  int y{20 + 12};
-  Renderer &renderer{Renderer::Get()};
-  renderer.RenderSprite(x, y, Sprites::RestartButtonHappy);
+  Application::RenderSprite(px + 2 + 40, py + 2, Sprites::RightDigits[d3]);
 }
 } // namespace Minesweeper

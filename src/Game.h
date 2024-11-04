@@ -1,8 +1,7 @@
 #pragma once
 
 #include "Board.h"
-#include "Core.h"
-#include "Input.h"
+#include "Engine.h"
 #include "RestartButton.h"
 #include <memory>
 
@@ -17,7 +16,7 @@ constexpr GameConfig BeginnerConfig{9, 9, 10};
 constexpr GameConfig IntermediateConfig{16, 16, 40};
 constexpr GameConfig ExpertConfig{30, 16, 99};
 
-inline constexpr Size GetWindowSize(const GameConfig &config) {
+inline constexpr Engine::Size GetWindowSize(const GameConfig &config) {
   return {20 * 2 + 30 * config.boardWidth,
           20 * 3 + 60 + 30 * config.boardHeight};
 }
@@ -29,7 +28,7 @@ public:
   Game(const GameConfig &config, int time);
   static Game &Get();
 
-  bool OnInput(UserCommand &cmd);
+  bool OnInput(Engine::UserCommand &cmd);
   bool OnUpdate(int time);
   void OnRender();
 
@@ -54,6 +53,5 @@ private:
   void RenderCounter();
   void RenderTimer();
   void RenderNumber(int px, int py, int n);
-  void RenderRestartButton();
 };
 } // namespace Minesweeper

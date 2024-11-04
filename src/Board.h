@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Input.h"
+#include "Engine.h"
 #include <memory>
 #include <random>
 #include <utility>
@@ -21,7 +21,7 @@ public:
   Board(int x, int y, int boardWidth, int boardHeight, int numberOfMines);
   void Init();
 
-  bool OnInput(UserCommand &cmd);
+  bool OnInput(Engine::UserCommand &cmd);
   void OnRender();
 
   bool HasChanged() { return m_hasChanged; }

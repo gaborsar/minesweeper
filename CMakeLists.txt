@@ -8,13 +8,11 @@ include_directories(minesweeper ${SDL2_INCLUDE_DIRS})
 
 add_executable(minesweeper
     src/main.cpp
-    src/Audio.cpp
+    src/Application.cpp
     src/Board.cpp
+    src/Engine.cpp
     src/Game.cpp
-    src/Renderer.cpp
     src/RestartButton.cpp
-    src/Sound.cpp
-    src/Window.cpp
 )
 
 target_link_libraries(minesweeper ${SDL2_LIBRARIES})
