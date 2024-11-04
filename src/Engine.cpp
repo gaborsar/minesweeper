@@ -63,7 +63,13 @@ void Renderer::RenderSprite(Texture &texture, int x, int y,
                             const Rect &sprite) {
   SDL_Rect srcRect{sprite.x, sprite.y, sprite.w, sprite.h};
   SDL_Rect dstRect{x, y, sprite.w, sprite.h};
-  SDL_RenderCopy(s_renderer->m_renderer, texture.m_texture, &srcRect, &dstRect);
+  int result = SDL_RenderCopy(s_renderer->m_renderer, texture.m_texture,
+                              &srcRect, &dstRect);
+  if (result < 0) {
+    std::stringstream msg{};
+    msg << "failed to render sprite: " << SDL_GetError();
+    throw std::runtime_error(msg.str());
+  }
 }
 
 Surface::Surface(const char *file, ImageType type) {
