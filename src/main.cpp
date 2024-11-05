@@ -8,7 +8,8 @@
 #include "./sound/SoundManager.h"
 #include <memory>
 
-int main() {
+int main()
+{
   // default difficulty and initial window size
   Game::GameConfig config{Game::BeginnerConfig};
   Game::Size windowSize{Game::GetWindowSize(config)};
@@ -16,8 +17,7 @@ int main() {
   // init shared static objects and resources
   auto random{std::make_unique<Game::Random>()};
   auto sdl{std::make_unique<Game::SDLPtr>()};
-  auto window{
-      std::make_unique<Game::Window>("Game", windowSize.w, windowSize.h)};
+  auto window{std::make_unique<Game::Window>("Game", windowSize.w, windowSize.h)};
   auto renderer{std::make_unique<Game::Renderer>()};
   auto mixer{std::make_unique<Game::Mixer>()};
   auto spriteRenderer{std::make_unique<Game::SpriteRenderer>()};
@@ -33,11 +33,14 @@ int main() {
   bool shouldRender{true};
   SDL_Event event;
 
-  while (running) {
+  while (running)
+  {
     Uint32 startTicks{SDL_GetTicks()};
 
-    while (SDL_PollEvent(&event)) {
-      switch (event.type) {
+    while (SDL_PollEvent(&event))
+    {
+      switch (event.type)
+      {
       case SDL_QUIT:
         running = false;
         break;
@@ -49,7 +52,8 @@ int main() {
 
     shouldRender = shouldRender || game->OnUpdate(startTicks);
 
-    if (shouldRender) {
+    if (shouldRender)
+    {
       Game::Renderer::Clear();
       game->OnRender();
       Game::Renderer::Render();
@@ -60,7 +64,8 @@ int main() {
     Uint32 elapsed{endTicks - startTicks};
 
     constexpr int targetDelay{1000 / 60};
-    if (elapsed < targetDelay) {
+    if (elapsed < targetDelay)
+    {
       SDL_Delay(targetDelay - elapsed);
     }
   }

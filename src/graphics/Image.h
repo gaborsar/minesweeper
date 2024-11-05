@@ -1,5 +1,10 @@
 #pragma once
 
-namespace Game {
-enum ImageType { BMP, ICO };
+namespace Game
+{
+    enum ImageType
+    {
+        BMP,
+        ICO
+    };
 }
