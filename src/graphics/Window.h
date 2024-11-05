@@ -10,6 +10,7 @@ public:
   friend class Renderer;
   static Window &Get();
   static void Resize(int w, int h);
+  static void SetIcon(const char *file);
 
 private:
   SDL_Window *m_window{nullptr};

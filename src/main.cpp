@@ -26,6 +26,9 @@ int main() {
   // init game session
   auto game{std::make_unique<Game::GameSession>(config, SDL_GetTicks())};
 
+  // set window icon
+  window->SetIcon("minesweeper.ico");
+
   bool running{true};
   bool shouldRender{true};
   SDL_Event event;

@@ -1,4 +1,6 @@
 #include "Window.h"
+#include "Image.h"
+#include "Surface.h"
 #include <sstream>
 
 namespace Game {
@@ -25,5 +27,10 @@ void Window::Resize(int w, int h) {
   SDL_SetWindowSize(s_instance->m_window, w, h);
   SDL_SetWindowPosition(s_instance->m_window, SDL_WINDOWPOS_CENTERED,
                         SDL_WINDOWPOS_CENTERED);
+}
+
+void Window::SetIcon(const char *file) {
+  Surface icon{file, ImageType::ICO};
+  SDL_SetWindowIcon(s_instance->m_window, icon.m_surface);
 }
 } // namespace Game

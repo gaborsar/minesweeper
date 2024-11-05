@@ -8,6 +8,7 @@ class Surface {
 public:
   Surface(const char *file, ImageType type);
   ~Surface();
+  friend class Window;
   friend class Texture;
 
 private:

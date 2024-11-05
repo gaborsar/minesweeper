@@ -1,4 +1,5 @@
 #include "Surface.h"
+#include <SDL_image.h>
 #include <sstream>
 
 namespace Game {
@@ -7,6 +8,9 @@ Surface::Surface(const char *file, ImageType type) {
   switch (type) {
   case ImageType::BMP:
     surface = SDL_LoadBMP(file);
+    break;
+  case ImageType::ICO:
+    surface = IMG_Load(file);
     break;
   }
   if (!surface) {
