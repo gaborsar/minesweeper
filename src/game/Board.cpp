@@ -37,13 +37,13 @@ namespace Game
     for (int i{0}; i < MAX_SIZE; ++i)
     {
       Block *block{&m_blocks[i]};
-      block->IsOpen = false;
-      block->IsFlagged = false;
-      block->IsMine = false;
-      block->IsExploded = false;
-      block->NearMineCount = 0;
-      block->Groups.first = 0;
-      block->Groups.second = 0;
+      block->isOpen = false;
+      block->isFlagged = false;
+      block->isMine = false;
+      block->isExploded = false;
+      block->nearMineCount = 0;
+      block->groups.first = 0;
+      block->groups.second = 0;
     }
 
     for (int i{0}; i < numberOfMines; ++i)
@@ -51,7 +51,7 @@ namespace Game
       int x{Random::Int(0, m_boardWidth - 1)};
       int y{Random::Int(0, m_boardHeight - 1)};
       int j{PosToIndex(x, y)};
-      while ((&m_blocks[j])->IsMine)
+      while ((&m_blocks[j])->isMine)
       {
         x = Random::Int(0, m_boardWidth - 1);
         y = Random::Int(0, m_boardHeight - 1);
@@ -103,22 +103,22 @@ namespace Game
         int px{m_x + x * 30};
         int py{m_y + y * 30};
         Block block{m_blocks[i]};
-        if (block.IsOpen)
+        if (block.isOpen)
         {
-          if (block.IsExploded)
+          if (block.isExploded)
           {
             SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockMineExploded);
             continue;
           }
-          if (block.IsMine)
+          if (block.isMine)
           {
             SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockMine);
             continue;
           }
-          SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockDigits[block.NearMineCount]);
+          SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockDigits[block.nearMineCount]);
           continue;
         }
-        if (block.IsFlagged)
+        if (block.isFlagged)
         {
           SpriteRenderer::RenderSprite(px, py, SpriteManager::BlockFlagged);
           continue;
@@ -138,7 +138,7 @@ namespace Game
     int count{0};
     for (int i{0}; i < m_boardHeight * m_boardWidth; ++i)
     {
-      if (m_blocks[i].IsFlagged)
+      if (m_blocks[i].isFlagged)
       {
         count++;
       }
@@ -149,7 +149,7 @@ namespace Game
   void Board::PlaceMine(int x, int y)
   {
     int i1{PosToIndex(x, y)};
-    m_blocks[i1].IsMine = true;
+    m_blocks[i1].isMine = true;
     for (int y2{y - 1}; y2 <= y + 1; ++y2)
     {
       if (y2 < 0 || y2 > m_boardHeight - 1)
@@ -163,7 +163,7 @@ namespace Game
           continue;
         }
         int i2{PosToIndex(x2, y2)};
-        ++m_blocks[i2].NearMineCount;
+        ++m_blocks[i2].nearMineCount;
       }
     }
   }
@@ -172,9 +172,9 @@ namespace Game
   {
     for (int i{0}; i < m_boardWidth * m_boardHeight; ++i)
     {
-      if (!m_blocks[i].IsMine && m_blocks[i].NearMineCount == 0)
+      if (!m_blocks[i].isMine && m_blocks[i].nearMineCount == 0)
       {
-        m_blocks[i].Groups.first = i + 1;
+        m_blocks[i].groups.first = i + 1;
       }
     }
 
@@ -184,11 +184,11 @@ namespace Game
       {
         int i1{PosToIndex(x1, y1)};
         Block *block1{&m_blocks[i1]};
-        if (block1->IsMine || block1->NearMineCount != 0)
+        if (block1->isMine || block1->nearMineCount != 0)
         {
           continue;
         }
-        int g1{block1->Groups.first};
+        int g1{block1->groups.first};
         for (int y2{y1 - 1}; y2 <= y1 + 1; ++y2)
         {
           if (y2 < 0 || y2 > m_boardHeight - 1)
@@ -203,11 +203,11 @@ namespace Game
             }
             int i2{PosToIndex(x2, y2)};
             Block *block2{&m_blocks[i2]};
-            if (block2->IsMine || block2->NearMineCount != 0)
+            if (block2->isMine || block2->nearMineCount != 0)
             {
               continue;
             }
-            int g2{block2->Groups.first};
+            int g2{block2->groups.first};
             if (g1 == g2)
             {
               continue;
@@ -231,11 +231,11 @@ namespace Game
       {
         int i1{PosToIndex(x1, y1)};
         Block *block1{&m_blocks[i1]};
-        if (block1->IsMine || block1->NearMineCount != 0)
+        if (block1->isMine || block1->nearMineCount != 0)
         {
           continue;
         }
-        int g{block1->Groups.first};
+        int g{block1->groups.first};
         for (int y2{y1 - 1}; y2 <= y1 + 1; ++y2)
         {
           if (y2 < 0 || y2 > m_boardHeight - 1)
@@ -250,22 +250,22 @@ namespace Game
             }
             int i2{PosToIndex(x2, y2)};
             Block *block2{&m_blocks[i2]};
-            if (block2->IsMine || block2->NearMineCount == 0)
+            if (block2->isMine || block2->nearMineCount == 0)
             {
               continue;
             }
-            if (block2->Groups.first == g || block2->Groups.second == g)
+            if (block2->groups.first == g || block2->groups.second == g)
             {
               continue;
             }
-            assert(block2->Groups.first == 0 || block2->Groups.second == 0);
-            if (block2->Groups.first == 0)
+            assert(block2->groups.first == 0 || block2->groups.second == 0);
+            if (block2->groups.first == 0)
             {
-              block2->Groups.first = g;
+              block2->groups.first = g;
             }
             else
             {
-              block2->Groups.second = g;
+              block2->groups.second = g;
             }
           }
         }
@@ -278,11 +278,11 @@ namespace Game
     for (int i{0}; i < m_boardWidth * m_boardHeight; ++i)
     {
       Block *block{&m_blocks[i]};
-      if (block->Groups.first != g2)
+      if (block->groups.first != g2)
       {
         continue;
       }
-      block->Groups.first = g1;
+      block->groups.first = g1;
     }
   }
 
@@ -300,35 +300,35 @@ namespace Game
     }
     int i{PosToIndex(x, y)};
     Block *block{&m_blocks[i]};
-    if (block->IsOpen || block->IsFlagged)
+    if (block->isOpen || block->isFlagged)
     {
       return false;
     }
     m_hasChanged = true;
-    block->IsOpen = true;
-    if (block->IsMine)
+    block->isOpen = true;
+    if (block->isMine)
     {
       for (int i{0}; i < m_boardHeight * m_boardWidth; ++i)
       {
         Block *block{&m_blocks[i]};
-        block->IsOpen = true;
-        block->IsFlagged = false;
+        block->isOpen = true;
+        block->isFlagged = false;
       }
-      block->IsExploded = true;
+      block->isExploded = true;
       SoundManager::PlayLosingSound();
       GameSession::Lose();
     }
     else
     {
-      if (block->NearMineCount == 0)
+      if (block->nearMineCount == 0)
       {
-        int g{block->Groups.first};
+        int g{block->groups.first};
         for (int i{0}; i < m_boardHeight * m_boardWidth; ++i)
         {
           Block *block{&m_blocks[i]};
-          if (!block->IsFlagged && (block->Groups.first == g || block->Groups.second == g))
+          if (!block->isFlagged && (block->groups.first == g || block->groups.second == g))
           {
-            block->IsOpen = true;
+            block->isOpen = true;
           }
         }
       }
@@ -336,7 +336,7 @@ namespace Game
       for (int i{0}; i < m_boardHeight * m_boardWidth; ++i)
       {
         Block *block{&m_blocks[i]};
-        if (block->IsMine ? block->IsOpen : !block->IsOpen)
+        if (block->isMine ? block->isOpen : !block->isOpen)
         {
           hasWon = false;
           break;
@@ -369,11 +369,11 @@ namespace Game
     }
     int i{PosToIndex(x, y)};
     Block *block{&m_blocks[i]};
-    if (block->IsOpen)
+    if (block->isOpen)
     {
       return false;
     }
-    block->IsFlagged = !block->IsFlagged;
+    block->isFlagged = !block->isFlagged;
     return true;
   }
 } // namespace Game

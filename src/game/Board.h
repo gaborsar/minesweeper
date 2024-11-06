@@ -7,12 +7,12 @@ namespace Game
 {
   struct Block
   {
-    bool IsOpen{false};
-    bool IsFlagged{false};
-    bool IsMine{false};
-    bool IsExploded{false};
-    int NearMineCount{0};
-    std::pair<int, int> Groups{0, 0};
+    bool isOpen{false};
+    bool isFlagged{false};
+    bool isMine{false};
+    bool isExploded{false};
+    int nearMineCount{0};
+    std::pair<int, int> groups{0, 0};
   };
 
   class Board
