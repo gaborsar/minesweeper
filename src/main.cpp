@@ -6,6 +6,7 @@
 #include "./graphics/Window.h"
 #include "./sound/Mixer.h"
 #include "./sound/SoundManager.h"
+#include <SDL.h>
 #include <memory>
 
 int main()
