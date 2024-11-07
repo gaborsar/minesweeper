@@ -13,6 +13,8 @@ namespace Game
     friend class SpriteRenderer;
 
   private:
+    Texture(const Texture &) = delete;
+    Texture &operator=(const Texture &) = delete;
     SDL_Texture *m_texture{nullptr};
   };
 } // namespace Game

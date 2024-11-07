@@ -11,6 +11,8 @@ namespace Game
     static int Int(int u, int v);
 
   private:
+    Random(const Random &) = delete;
+    Random &operator=(const Random &) = delete;
     std::mt19937 m_mt;
   };
 } // namespace Game

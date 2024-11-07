@@ -31,6 +31,14 @@ namespace Game
     static void Lose();
 
   private:
+    GameSession(const GameSession &) = delete;
+    GameSession &operator=(const GameSession &) = delete;
+
+    void RenderBackground();
+    void RenderCounter();
+    void RenderTimer();
+    void RenderNumber(int px, int py, int n);
+
     GameConfig m_config{BeginnerConfig};
     GameStatus m_status{GameStatus::Playing};
 
@@ -40,11 +48,5 @@ namespace Game
 
     RestartButton m_restartButton;
     Board m_board;
-
-  private:
-    void RenderBackground();
-    void RenderCounter();
-    void RenderTimer();
-    void RenderNumber(int px, int py, int n);
   };
 } // namespace Game

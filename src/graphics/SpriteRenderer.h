@@ -12,6 +12,8 @@ namespace Game
     static void RenderSprite(int x, int y, const Rect &sprite);
 
   private:
+    SpriteRenderer(const SpriteRenderer &) = delete;
+    SpriteRenderer &operator=(const SpriteRenderer &) = delete;
     Texture m_atlas;
   };
 } // namespace Game

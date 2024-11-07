@@ -11,13 +11,18 @@ namespace Game
   public:
     Renderer();
     ~Renderer();
-    friend class Texture;
-    friend class SpriteRenderer;
+
     static Renderer &Get();
     static void Clear();
     static void Render();
 
+    friend class Texture;
+    friend class SpriteRenderer;
+
   private:
+    Renderer(const Renderer &) = delete;
+    Renderer &operator=(const Renderer &) = delete;
+
     SDL_Renderer *m_renderer{nullptr};
   };
 } // namespace Game

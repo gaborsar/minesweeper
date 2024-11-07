@@ -20,6 +20,7 @@ namespace Game
   public:
     Board();
     ~Board();
+
     void Move(int x, int y);
     void Init(int boardWidth, int boardHeight, int numberOfMines);
 
@@ -30,14 +31,8 @@ namespace Game
     int GetNumberOfFlags();
 
   private:
-    int m_x{0};
-    int m_y{0};
-
-    int m_boardWidth{0};
-    int m_boardHeight{0};
-
-    bool m_hasChanged{false};
-    Block *m_blocks;
+    Board(const Board &) = delete;
+    Board &operator=(const Board &) = delete;
 
     void PlaceMine(int x, int y);
     void CreateGroups();
@@ -47,5 +42,14 @@ namespace Game
     bool OnRightClick(int px, int py);
 
     inline int PosToIndex(int x, int y) { return y * m_boardWidth + x; }
+
+    int m_x{0};
+    int m_y{0};
+
+    int m_boardWidth{0};
+    int m_boardHeight{0};
+
+    bool m_hasChanged{false};
+    Block *m_blocks;
   };
 } // namespace Game

@@ -7,8 +7,7 @@ namespace Game
 {
   static SpriteRenderer *s_instance{nullptr};
 
-  SpriteRenderer::SpriteRenderer()
-      : m_atlas{Texture{"tiles.bmp", ImageType::BMP}}
+  SpriteRenderer::SpriteRenderer() : m_atlas{Texture{"tiles.bmp", ImageType::BMP}}
   {
     s_instance = this;
   }

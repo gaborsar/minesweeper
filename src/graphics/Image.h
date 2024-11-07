@@ -2,9 +2,9 @@
 
 namespace Game
 {
-    enum ImageType
-    {
-        BMP,
-        ICO
-    };
+  enum ImageType
+  {
+    BMP,
+    ICO
+  };
 }

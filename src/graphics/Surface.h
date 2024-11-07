@@ -14,6 +14,8 @@ namespace Game
     friend class Texture;
 
   private:
+    Surface(const Surface &) = delete;
+    Surface &operator=(const Surface &) = delete;
     SDL_Surface *m_surface{nullptr};
   };
 } // namespace Game
